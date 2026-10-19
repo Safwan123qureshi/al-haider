@@ -8,3 +8,5 @@ dist/
 .env
 .env.*
 al-haider-deploy.zip
+.vercel
+.env*
