@@ -5,8 +5,9 @@ Official website for **Al Haider Pizza House** — Opposite UET, Charsadda Chowk
 Phone / WhatsApp: **0339-5509755** (`923395509755`)
 
 Modern, responsive restaurant website built with **React + Vite**, featuring a full searchable menu,
-a live shopping cart (saved in the browser), a real time-limited **20% OFF** offer system, a checkout
-form, and one-tap **WhatsApp ordering**. No backend, no database, no API keys required.
+a live shopping cart (saved in the browser), a time-limited offer system (the October 20% OFF offer
+has ended and is disabled), a checkout form, and one-tap **WhatsApp ordering**. No backend, no
+database, no API keys required.
 
 ---
 
@@ -122,13 +123,19 @@ To add a **new category**, add it to the `categories` array at the top of the sa
 In `src/data/menu.js` set `available: false`. The item disappears from the menu, search, and
 ordering. Change it back to `true` to restore it.
 
-## 9. How to change or disable the 20% offer
+## 9. The 20% offer has ENDED (and is disabled)
 
-Open **`src/data/offer.js`**:
+> **Status: the October 20% OFF offer is over.** `src/data/offer.js` now has
+> `enabled: false` — the banner, "20% OFF" badges, crossed-out prices and all
+> discounts are switched off everywhere (cart, checkout and WhatsApp messages
+> use regular menu prices). Do **not** re-enable it without a new, approved offer.
+
+The offer system itself is still documented for future, approved promotions —
+open **`src/data/offer.js`**:
 
 ```js
 export const offerConfig = {
-  enabled: true,                    // ← set false to turn the offer OFF instantly
+  enabled: false,                   // ← OFF — the 20% offer has ended
   discountPercent: 20,              // ← e.g. 10 for 10% OFF
   startDate: null,                  // null = starts immediately
   endDate: "2026-10-31T23:59:00+05:00",
@@ -138,9 +145,9 @@ export const offerConfig = {
 };
 ```
 
-- The banner, "20% OFF" badges, discounted prices, cart totals and WhatsApp messages all follow this file.
-- After expiry the banner hides and **all prices automatically revert to normal** — everywhere, instantly.
-- To exclude one item from the discount, add `discountEligible: false` to that item in `menu.js`.
+- The banner, "OFF" badges, discounted prices, cart totals and WhatsApp messages all follow this file.
+- After expiry (or with `enabled: false`) the banner hides and **all prices automatically revert to normal** — everywhere, instantly.
+- To exclude one item from a future discount, add `discountEligible: false` to that item in `menu.js`.
 
 ## 10. How to set a new offer expiry date (Asia/Karachi time)
 

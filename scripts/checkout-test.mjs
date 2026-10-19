@@ -2,7 +2,7 @@
  * Real-browser verification of the checkout + WhatsApp order flow.
  * Runs the production build (vite preview) in headless Chrome and:
  *  1. adds a PIZZA and a BURGER to the cart
- *  2. verifies drawer subtotal / discount / total maths (20% offer)
+ *  2. verifies drawer prices / no-discount totals (20% offer has ended)
  *  3. completes the checkout form
  *  4. captures the generated WhatsApp link (window.open stubbed)
  *  5. asserts the order message contains items, customer details, discount, total
@@ -62,19 +62,20 @@ try {
   const badge = await page.evaluate(() => document.querySelector(".navbar__badge")?.textContent);
   badge === "2" ? pass("pizza + burger added (badge = 2)") : fail(`expected badge 2, got ${badge}`);
 
-  // 2) Open drawer and verify money maths with the active 20% offer
+  // 2) Open drawer and verify regular prices only — the 20% offer has ended
   await page.locator("button.navbar__cart").click();
   await delay(500);
   const drawerText = await page.evaluate(() => document.querySelector(".cart-drawer")?.textContent || "");
-  // 650 + 350 = 1000 subtotal; 20% off => 200 discount; payable 800
+  // 650 + 350 = 1000 regular prices, no discount anywhere
   drawerText.includes("Rs. 1,000")
-    ? pass("subtotal Rs. 1,000 shown")
-    : fail("subtotal Rs. 1,000 missing: " + drawerText.slice(0, 300));
-  drawerText.includes("Rs. 800") ? pass("total payable Rs. 800 shown") : fail("total Rs. 800 missing");
-  drawerText.includes("Discount (20%)") ? pass("20% discount row shown") : fail("Discount (20%) row missing");
-  (drawerText.match(/20%/g) || []).length <= 3
-    ? pass("discount percent not duplicated per item")
-    : fail("discount appears applied more than once");
+    ? pass("regular-price total Rs. 1,000 shown")
+    : fail("total Rs. 1,000 missing: " + drawerText.slice(0, 300));
+  drawerText.includes("Discount")
+    ? fail("drawer shows a discount row but the offer has ended")
+    : pass("no discount row in drawer");
+  (drawerText.match(/\d+%/g) || []).length === 0
+    ? pass("no percentage-off labels in drawer")
+    : fail("percentage label found in drawer");
 
   // 3) Go to checkout and fill the form
   await page.locator(".cart-drawer__actions button", { hasText: "Checkout" }).click();
@@ -108,13 +109,16 @@ try {
       "Delivery Address: Charsadda Chowk, Mardan",
       "AH Special Pizza (Small)",
       "Zinger Burger",
-      "Discount: 20%",
-      "TOTAL PAYABLE: Rs. 800",
+      "TOTAL: Rs. 1,000",
     ]) {
       msg.includes(expected)
         ? pass(`message contains "${expected}"`)
         : fail(`message missing "${expected}"`);
     }
+    // The 20% offer has ended: no discount lines or percentages in the message.
+    !msg.includes("Discount") && !msg.includes("20%")
+      ? pass("message has no discount lines or percentages")
+      : fail("message still mentions a discount");
   }
 
   // 5) Popup was blocked (stub returned null) -> fallback panel must appear

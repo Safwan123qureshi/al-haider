@@ -7,8 +7,20 @@ import { getOfferStatus } from "../src/utils/offerStatus.js";
 import { offerConfig } from "../src/data/offer.js";
 import { menuItems, getMenuItem } from "../src/data/menu.js";
 
-const activeOffer = getOfferStatus(offerConfig, new Date("2026-10-15T12:00:00+05:00"));
-const expiredOffer = getOfferStatus(offerConfig, new Date("2026-11-05T12:00:00+05:00"));
+const activeOfferCfg = { ...offerConfig, enabled: true }; // local test config only
+const activeOffer = getOfferStatus(activeOfferCfg, new Date("2026-10-15T12:00:00+05:00"));
+const expiredOffer = getOfferStatus(activeOfferCfg, new Date("2026-11-05T12:00:00+05:00"));
+
+// The production offer has ENDED and must stay disabled: the live site must
+// never apply a discount. Guard against accidental re-enabling.
+test("production offer config is disabled (expired 20% offer)", () => {
+  const live = getOfferStatus(offerConfig, new Date("2026-10-15T12:00:00+05:00"));
+  assert.equal(live.active, false);
+  const item = getMenuItem("zinger-burger");
+  const pricing = getPricing(item, null, live, offerConfig);
+  assert.equal(pricing.onOffer, false);
+  assert.equal(pricing.discounted, 350);
+});
 
 test("formatPKR groups thousands and uses Rs.", () => {
   assert.equal(formatPKR(400), "Rs. 400");
@@ -23,7 +35,7 @@ test("roundRupees rounds to nearest whole rupee", () => {
 
 test("spec example: 500 → 20% off → 400 payable, 100 saved", () => {
   const item = { price: 500, name: "Test" };
-  const pricing = getPricing(item, null, activeOffer, offerConfig);
+  const pricing = getPricing(item, null, activeOffer, activeOfferCfg);
   assert.equal(pricing.original, 500);
   assert.equal(pricing.discounted, 400);
   assert.equal(pricing.savings, 100);
@@ -31,8 +43,8 @@ test("spec example: 500 → 20% off → 400 payable, 100 saved", () => {
 
 test("discount applies to the SELECTED pizza size price", () => {
   const pizza = getMenuItem("turkish-pizza"); // small 500, medium 1100, large 1500
-  const small = getPricing(pizza, "small", activeOffer, offerConfig);
-  const large = getPricing(pizza, "large", activeOffer, offerConfig);
+  const small = getPricing(pizza, "small", activeOffer, activeOfferCfg);
+  const large = getPricing(pizza, "large", activeOffer, activeOfferCfg);
   assert.equal(small.discounted, 400); // 500 × 0.8
   assert.equal(large.discounted, 1200); // 1500 × 0.8
 });
@@ -58,7 +70,7 @@ test("cart summary: mixed cart maths with active offer", () => {
     { item: getMenuItem("turkish-pizza"), size: "small", quantity: 2 }, // 500 → 400 each
     { item: getMenuItem("zinger-burger"), size: null, quantity: 1 }, // 350 → 280
   ];
-  const summary = computeCartSummary(lines, activeOffer, offerConfig);
+  const summary = computeCartSummary(lines, activeOffer, activeOfferCfg);
   assert.equal(summary.originalSubtotal, 1350); // 1000 + 350
   assert.equal(summary.payableTotal, 1080); // 800 + 280
   assert.equal(summary.discountTotal, 270);

@@ -2,6 +2,13 @@
  * ---------------------------------------------------------------
  * LIMITED-TIME OFFER CONFIGURATION — Al Haider Pizza House
  * ---------------------------------------------------------------
+ * ⚠️ THE 20% OFFER HAS ENDED (October 2026) AND IS DISABLED.
+ *    `enabled: false` below is a complete kill-switch: the banner,
+ *    badges, crossed-out prices, cart/checkout discounts and
+ *    WhatsApp discounted totals are ALL switched off. Regular menu
+ *    prices are shown and charged everywhere.
+ *    Do NOT re-enable this without a new, approved offer.
+ *
  * Edit this file to control the promotional discount.
  *
  * enabled          : set to false to turn the offer off immediately
@@ -21,7 +28,7 @@
  * ---------------------------------------------------------------
  */
 export const offerConfig = {
-  enabled: true,
+  enabled: false, // 20% offer ENDED (expired 2026-10-31 23:59 PKT) — keep false
   discountPercent: 20,
   startDate: null,
   endDate: "2026-10-31T23:59:00+05:00",

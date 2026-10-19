@@ -122,10 +122,22 @@ describe("Cart drawer", () => {
     expect(drawer.textContent).toContain("Zinger Burger");
     // qty control shows 2
     expect(within(drawer).getByText("2")).toBeTruthy();
-    // 20% offer active (until 2026-10-31): unit 350 -> 280, subtotal shown
     expect(drawer.textContent).toContain("Rs.");
     expect(drawer.textContent).toContain("Total Payable");
-    expect(drawer.textContent).toContain("Discount");
+
+    // The 20% offer has ENDED (disabled in src/data/offer.js): the drawer must
+    // show regular prices only — no discount row and no crossed-out prices.
+    expect(drawer.textContent).not.toContain("Discount");
+    expect(drawer.querySelector("s")).toBeNull();
+  });
+
+  it("no offer UI is rendered anywhere while the offer is disabled", () => {
+    render(<App />);
+    // No offer banner, no hero offer chip, no '20% OFF' badges on menu cards.
+    expect(document.querySelector(".offer-banner")).toBeNull();
+    expect(document.querySelector(".hero__offer-chip")).toBeNull();
+    const badges = [...document.querySelectorAll(".menu-card__badge")];
+    expect(badges.filter((b) => b.textContent.includes("OFF"))).toHaveLength(0);
   });
 
   it("quantity +/− controls update totals; remove clears the line", () => {
