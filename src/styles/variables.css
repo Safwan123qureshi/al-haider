@@ -1,0 +1,279 @@
+/* =========================================================
+   Al Haider Pizza House — design tokens & global theme
+   Black · Charcoal · Golden Yellow · White
+   ========================================================= */
+
+:root {
+  /* Brand colours */
+  --black: #0b0b0d;
+  --black-2: #101014;
+  --charcoal: #17171c;
+  --charcoal-2: #1f1f26;
+  --charcoal-3: #2a2a33;
+  --gold: #f7b91e;
+  --gold-2: #ffcb3d;
+  --gold-3: #e09400;
+  --gold-soft: rgba(247, 185, 30, 0.12);
+  --white: #ffffff;
+  --text: #f2f2f4;
+  --text-dim: #a9a9b4;
+  --text-dark: #17171c;
+  --danger: #ff6b57;
+  --success: #37c871;
+  --whatsapp: #25d366;
+
+  /* Typography */
+  --font-body: "Poppins", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-display: "Bebas Neue", "Poppins", Impact, sans-serif;
+
+  /* Layout */
+  --container: 1200px;
+  --nav-height: 74px;
+  --radius-sm: 10px;
+  --radius: 16px;
+  --radius-lg: 24px;
+  --shadow-card: 0 10px 30px rgba(0, 0, 0, 0.35);
+  --shadow-pop: 0 18px 50px rgba(0, 0, 0, 0.5);
+
+  /* Motion */
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --fast: 0.18s;
+  --med: 0.32s;
+}
+
+/* ---------- Reset & base ---------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--black);
+  color: var(--text);
+  line-height: 1.6;
+  font-size: 16px;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+::selection {
+  background: var(--gold);
+  color: var(--black);
+}
+
+/* Focus visibility for keyboard users */
+:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.container {
+  width: 100%;
+  max-width: var(--container);
+  margin-inline: auto;
+  padding-inline: clamp(18px, 4vw, 32px);
+}
+
+.text-gold {
+  color: var(--gold);
+}
+
+/* Sections anchor offset below fixed navbar */
+section[id] {
+  scroll-margin-top: calc(var(--nav-height) + 8px);
+}
+
+.section {
+  padding-block: clamp(56px, 9vw, 110px);
+  position: relative;
+}
+
+/* ---------- Buttons ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-weight: 600;
+  border-radius: 999px;
+  padding: 12px 26px;
+  font-size: 0.95rem;
+  letter-spacing: 0.01em;
+  transition: transform var(--fast) var(--ease), box-shadow var(--med) var(--ease),
+    background var(--fast) ease, color var(--fast) ease, border-color var(--fast) ease;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+.btn--gold {
+  background: linear-gradient(180deg, var(--gold-2), var(--gold-3));
+  color: var(--black);
+  box-shadow: 0 8px 24px rgba(247, 185, 30, 0.28);
+}
+
+.btn--gold:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(247, 185, 30, 0.42);
+}
+
+.btn--gold.is-added {
+  background: var(--success);
+  color: #fff;
+  box-shadow: 0 8px 24px rgba(55, 200, 113, 0.35);
+}
+
+.btn--dark {
+  background: var(--black);
+  color: var(--gold);
+}
+
+.btn--dark:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-pop);
+}
+
+.btn--ghost {
+  border: 1.5px solid rgba(255, 255, 255, 0.35);
+  color: var(--white);
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(6px);
+}
+
+.btn--ghost:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+  transform: translateY(-2px);
+}
+
+.btn--ghost-dark {
+  border: 1.5px solid var(--charcoal-3);
+  color: var(--text-dim);
+}
+
+.btn--ghost-dark:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+.btn--lg {
+  padding: 15px 34px;
+  font-size: 1.02rem;
+}
+
+.btn--sm {
+  padding: 9px 18px;
+  font-size: 0.85rem;
+}
+
+.btn--card {
+  padding: 10px 18px;
+  font-size: 0.86rem;
+}
+
+.btn--block {
+  width: 100%;
+}
+
+.btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* ---------- Section headings ---------- */
+.section-head {
+  text-align: center;
+  max-width: 680px;
+  margin: 0 auto clamp(30px, 5vw, 52px);
+}
+
+.section-head__eyebrow {
+  display: inline-block;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gold);
+  background: var(--gold-soft);
+  border: 1px solid rgba(247, 185, 30, 0.25);
+  padding: 6px 16px;
+  border-radius: 999px;
+  margin-bottom: 16px;
+}
+
+.section-head__title {
+  font-family: var(--font-display);
+  font-size: clamp(2.1rem, 5.4vw, 3.4rem);
+  line-height: 1.04;
+  letter-spacing: 0.02em;
+  font-weight: 400;
+  color: var(--white);
+  margin-bottom: 14px;
+}
+
+.section-head__sub {
+  color: var(--text-dim);
+  font-size: clamp(0.92rem, 2vw, 1.02rem);
+}
+
+/* ---------- Food image fallback ---------- */
+.food-fallback {
+  width: 100%;
+  height: 100%;
+  min-height: 140px;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(circle at 30% 25%, var(--charcoal-3), var(--charcoal) 70%);
+  font-size: 2.6rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

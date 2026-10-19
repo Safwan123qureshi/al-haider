@@ -1,0 +1,10 @@
+node_modules/
+dist/
+*.log
+.DS_Store
+
+# Deployment / secrets — never commit these
+.vercel/
+.env
+.env.*
+al-haider-deploy.zip

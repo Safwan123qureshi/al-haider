@@ -1,0 +1,43 @@
+/* =========================================================
+   Base utilities & helpers
+   ========================================================= */
+
+/* Visually hidden but accessible to screen readers */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Smooth stacking when the cart drawer is open */
+.page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.page main {
+  flex: 1;
+}
+
+/* Image placeholder shimmer while loading */
+.menu-card__media img[loading="lazy"] {
+  background: var(--charcoal);
+}
+
+/* Print safety — the site is for ordering, not printing */
+@media print {
+  .navbar,
+  .fab-whatsapp,
+  .cart-drawer,
+  .cart-overlay,
+  .hero__scroll-hint {
+    display: none !important;
+  }
+}

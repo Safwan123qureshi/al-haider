@@ -1,0 +1,17 @@
+# Netlify configuration — Al Haider Pizza House
+# The site is a pre-built static React/Vite app; `dist/` is the publish folder.
+
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+# All assets are pre-hashed by Vite; safe to cache aggressively.
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/images/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
