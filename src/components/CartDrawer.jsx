@@ -71,7 +71,12 @@ export default function CartDrawer() {
           </button>
         </header>
 
-        {summary.lines.length === 0 ? (
+        {/* The checkout stage renders even with an empty cart: after a
+            successful WhatsApp checkout the cart is cleared, but the result
+            panel (with the preserved order message) must stay on screen. */}
+        {stage === "checkout" ? (
+          <CheckoutForm onBack={() => setStage("cart")} onDone={() => setStage("cart")} />
+        ) : summary.lines.length === 0 ? (
           <div className="cart-empty">
             <span aria-hidden="true">🛒</span>
             <h3>Your cart is empty</h3>
@@ -80,8 +85,6 @@ export default function CartDrawer() {
               Browse Full Menu
             </button>
           </div>
-        ) : stage === "checkout" ? (
-          <CheckoutForm onBack={() => setStage("cart")} onDone={() => setStage("cart")} />
         ) : (
           <>
             <div className="cart-items">

@@ -171,3 +171,69 @@ describe("Cart drawer", () => {
     expect(JSON.parse(window.localStorage.getItem("alhaider_cart_v1"))).toHaveLength(1);
   });
 });
+
+describe("Checkout clears the cart only when WhatsApp actually opens", () => {
+  const startCheckout = () => {
+    fireEvent.click(addButtonFor("Zinger Burger"));
+    fireEvent.click(screen.getByLabelText(/^Open cart/));
+    fireEvent.click(screen.getByText("Checkout →"));
+  };
+
+  const fillForm = () => {
+    fireEvent.change(screen.getByLabelText(/Your Name/), { target: { value: "Test Customer" } });
+    fireEvent.change(screen.getByLabelText(/Phone Number/), { target: { value: "0339-5509755" } });
+    fireEvent.change(screen.getByLabelText(/Delivery Address/), { target: { value: "Charsadda Chowk, Mardan" } });
+  };
+
+  const submit = () => {
+    fireEvent.submit(document.querySelector("form.checkout-form"));
+  };
+
+  it("WhatsApp opens -> cart + localStorage cleared, message preserved", () => {
+    const openSpy = vi.spyOn(window, "open").mockReturnValue({});
+    render(<App />);
+    startCheckout();
+    fillForm();
+    submit();
+
+    expect(openSpy).toHaveBeenCalledTimes(1);
+    expect(openSpy.mock.calls[0][0]).toContain("https://wa.me/923395509755?text=");
+
+    // Badge gone and persisted cart emptied immediately.
+    expect(navbarBadge()).toBeNull();
+    expect(JSON.parse(window.localStorage.getItem("alhaider_cart_v1"))).toEqual([]);
+
+    // Result panel keeps the generated order message available.
+    const panel = document.querySelector(".checkout-result");
+    expect(panel).toBeTruthy();
+    expect(panel.textContent).toContain("WhatsApp is opening");
+    expect(panel.textContent).toContain("cart has been cleared");
+    expect(panel.querySelector("textarea").value).toContain("Customer Name: Test Customer");
+    expect(panel.querySelector("textarea").value).toContain("Zinger Burger");
+  });
+
+  it("WhatsApp blocked -> cart is NOT cleared", () => {
+    vi.spyOn(window, "open").mockReturnValue(null);
+    render(<App />);
+    startCheckout();
+    fillForm();
+    submit();
+
+    expect(document.querySelector(".checkout-result").textContent).toContain("We could not open WhatsApp");
+    expect(navbarBadge().textContent).toBe("1");
+    expect(JSON.parse(window.localStorage.getItem("alhaider_cart_v1"))).toHaveLength(1);
+  });
+
+  it("cleared cart does not come back on a fresh mount (refresh simulation)", () => {
+    vi.spyOn(window, "open").mockReturnValue({});
+    const { unmount } = render(<App />);
+    startCheckout();
+    fillForm();
+    submit();
+    unmount();
+
+    render(<App />);
+    expect(navbarBadge()).toBeNull();
+    expect(JSON.parse(window.localStorage.getItem("alhaider_cart_v1"))).toEqual([]);
+  });
+});

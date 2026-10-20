@@ -63,15 +63,27 @@ export function buildWhatsAppLink(message) {
 }
 
 /**
- * Open WhatsApp in a new tab.
- * Returns { ok: true } if the window opened, otherwise { ok: false, error }.
+ * Open WhatsApp in a new tab with the order message prepared.
+ * Returns { ok: true, url } when the destination tab was successfully created,
+ * otherwise { ok: false, error, url }.
+ *
+ * Implementation note: the "noopener" window feature (like rel="noopener" on
+ * anchors) makes window.open() return null EVEN WHEN the tab opened fine, so
+ * it cannot be used for success detection. We therefore open without the
+ * feature — so a non-null return reliably means "destination opened" on both
+ * mobile and desktop — and sever the opener reference manually instead.
  */
 export function openWhatsApp(message) {
   const url = buildWhatsAppLink(message);
   try {
-    const win = window.open(url, "_blank", "noopener,noreferrer");
+    const win = window.open(url, "_blank");
     if (!win) {
       return { ok: false, error: "popup_blocked", url };
+    }
+    try {
+      win.opener = null; // same security effect as noopener
+    } catch {
+      /* cross-origin hardening is best-effort */
     }
     return { ok: true, url };
   } catch (err) {
