@@ -9,7 +9,7 @@ export default function PopularItems() {
   return (
     <section id="popular" className="section popular-section">
       <div className="container">
-        <div className="section-head">
+        <div className="section-head" data-reveal>
           <p className="section-head__eyebrow">Customer Favourites</p>
           <h2 className="section-head__title">
             Popular <span className="text-gold">Right Now</span>
@@ -19,9 +19,9 @@ export default function PopularItems() {
           </p>
         </div>
 
-        <div className="menu-grid menu-grid--popular">
-          {featured.map((item) => (
-            <MenuCard key={item.id} item={item} />
+        <div className="menu-grid menu-grid--popular" data-reveal-grid>
+          {featured.map((item, i) => (
+            <MenuCard key={item.id} item={item} index={i} />
           ))}
         </div>
       </div>

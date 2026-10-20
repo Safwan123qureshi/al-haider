@@ -1,0 +1,1275 @@
+/* =========================================================
+   Al Haider Pizza House — Premium 3D / cinematic layer
+   Additive stylesheet (imported last) on top of
+   variables.css · base.css · sections.css · cart.css
+   Keeps the black & golden-yellow identity while adding
+   depth, light, layered shadows and smooth motion.
+   Lightweight CSS transforms only — no heavy dependencies.
+   ========================================================= */
+
+/* ---------------------------------------------------------
+   1 · Ambient atmosphere & section seams
+   --------------------------------------------------------- */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(60vw 60vh at 10% 6%, rgba(247, 185, 30, 0.055), transparent 62%),
+    radial-gradient(55vw 55vh at 92% 88%, rgba(247, 185, 30, 0.045), transparent 62%);
+}
+
+/* Thin gold light seam separating major sections */
+.section::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(860px, 82%);
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(247, 185, 30, 0.3), transparent);
+  pointer-events: none;
+}
+
+/* Richer stage lighting behind the main content sections */
+.popular-section {
+  background:
+    radial-gradient(ellipse 900px 520px at 88% 0%, rgba(247, 185, 30, 0.07), transparent 58%),
+    var(--black);
+}
+
+.menu-section {
+  background:
+    radial-gradient(ellipse 820px 480px at 10% 16%, rgba(247, 185, 30, 0.055), transparent 60%),
+    radial-gradient(ellipse 700px 420px at 92% 84%, rgba(247, 185, 30, 0.045), transparent 62%),
+    linear-gradient(180deg, var(--black) 0%, var(--black-2) 32%, var(--black-2) 76%, var(--black) 100%);
+}
+
+.why-section {
+  background:
+    radial-gradient(ellipse 760px 420px at 50% 0%, rgba(247, 185, 30, 0.06), transparent 65%),
+    linear-gradient(180deg, var(--black-2), var(--black));
+}
+
+/* Gold-tinted scrollbar */
+html {
+  scrollbar-color: var(--charcoal-3) var(--black-2);
+  scrollbar-width: thin;
+}
+
+::-webkit-scrollbar {
+  width: 11px;
+  height: 11px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--black-2);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--charcoal-3), var(--charcoal-2));
+  border: 2px solid var(--black-2);
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, var(--gold-2), var(--gold-3));
+}
+
+/* ---------------------------------------------------------
+   2 · Navbar — glass, progress line, active link
+   --------------------------------------------------------- */
+.navbar {
+  background: linear-gradient(180deg, rgba(11, 11, 13, 0.78), rgba(11, 11, 13, 0.5));
+  backdrop-filter: blur(16px) saturate(1.3);
+  -webkit-backdrop-filter: blur(16px) saturate(1.3);
+}
+
+.navbar--scrolled {
+  background: rgba(11, 11, 13, 0.88);
+  border-bottom-color: rgba(247, 185, 30, 0.2);
+  box-shadow:
+    0 20px 44px -20px rgba(0, 0, 0, 0.9),
+    0 1px 0 rgba(247, 185, 30, 0.12);
+}
+
+.navbar__progress {
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  width: 100%;
+  height: 2px;
+  transform-origin: 0 50%;
+  transform: scaleX(var(--nav-progress, 0));
+  background: linear-gradient(90deg, var(--gold-3), var(--gold-2));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.navbar--scrolled .navbar__progress {
+  opacity: 1;
+}
+
+.navbar__brand {
+  transition: transform 0.3s var(--ease);
+}
+
+.navbar__brand:hover {
+  transform: translateY(-1px);
+}
+
+.logo__mark {
+  transition: transform 0.45s var(--ease), filter 0.45s ease;
+}
+
+.navbar__brand:hover .logo__mark {
+  transform: rotate(-9deg) scale(1.08);
+  filter: drop-shadow(0 6px 18px rgba(247, 185, 30, 0.55));
+}
+
+.navbar__links a.is-active {
+  color: var(--white);
+}
+
+.navbar__links a.is-active::after {
+  width: 100%;
+}
+
+.navbar__call {
+  background: rgba(247, 185, 30, 0.06);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.navbar__call:hover {
+  background: var(--gold-soft);
+  box-shadow: 0 10px 24px -12px rgba(247, 185, 30, 0.6);
+}
+
+.navbar__cart:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow:
+    0 12px 26px -12px rgba(247, 185, 30, 0.55),
+    inset 0 0 0 1px rgba(247, 185, 30, 0.4);
+}
+
+.navbar__badge {
+  animation: badgePop 0.45s var(--ease);
+}
+
+@keyframes badgePop {
+  0% { transform: scale(0.35); opacity: 0; }
+  55% { transform: scale(1.25); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.navbar__burger.is-open {
+  border-color: rgba(247, 185, 30, 0.6);
+  box-shadow: 0 0 0 3px rgba(247, 185, 30, 0.12);
+}
+
+/* ---------------------------------------------------------
+   3 · Buttons — sheen, dimension, press
+   --------------------------------------------------------- */
+.btn {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  touch-action: manipulation;
+}
+
+/* Gloss sweep — above the background, below the label (z-index -1) */
+.btn::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  z-index: -1;
+  background: linear-gradient(105deg, transparent 34%, rgba(255, 255, 255, 0.45) 50%, transparent 66%);
+  transform: translateX(-135%);
+  transition: transform 0.8s var(--ease);
+  pointer-events: none;
+}
+
+.btn:hover::before {
+  transform: translateX(135%);
+}
+
+.btn svg {
+  transition: translate 0.3s var(--ease);
+}
+
+.btn:hover svg {
+  translate: 3px 0;
+}
+
+.btn--gold {
+  background: linear-gradient(180deg, var(--gold-2) 0%, var(--gold) 58%, var(--gold-3) 100%);
+  box-shadow:
+    0 14px 30px -12px rgba(247, 185, 30, 0.55),
+    0 4px 12px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.22);
+}
+
+.btn--gold:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    0 22px 44px -16px rgba(247, 185, 30, 0.7),
+    0 6px 16px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.65),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.22);
+}
+
+.btn--gold:active {
+  transform: translateY(1px) scale(0.98);
+}
+
+.btn--gold.is-added {
+  box-shadow:
+    0 14px 30px -12px rgba(55, 200, 113, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+.btn--ghost {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.04));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    0 12px 26px -16px rgba(0, 0, 0, 0.9);
+}
+
+.btn--ghost:hover {
+  transform: translateY(-3px);
+  background: linear-gradient(180deg, rgba(247, 185, 30, 0.14), rgba(247, 185, 30, 0.05));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    0 18px 36px -18px rgba(0, 0, 0, 0.95),
+    0 0 0 1px rgba(247, 185, 30, 0.35);
+}
+
+.btn:active {
+  transform: translateY(1px) scale(0.98);
+}
+
+.btn:disabled:active {
+  transform: none;
+}
+
+.btn:disabled::before {
+  display: none;
+}
+
+/* Gradient gold display text with a soft halo */
+.text-gold {
+  background: linear-gradient(180deg, var(--gold-2) 0%, var(--gold) 55%, var(--gold-3) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  text-shadow: none;
+  filter: drop-shadow(0 10px 26px rgba(247, 185, 30, 0.3));
+}
+
+/* Toolbar controls — subtle lift & focus depth */
+.size-pill {
+  touch-action: manipulation;
+  transition:
+    transform 0.25s var(--ease),
+    background var(--fast) ease,
+    border-color var(--fast) ease,
+    box-shadow 0.25s var(--ease),
+    color var(--fast) ease;
+}
+
+.size-pill:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px -12px rgba(0, 0, 0, 0.9);
+}
+
+.size-pill.is-active {
+  box-shadow:
+    0 10px 22px -12px rgba(247, 185, 30, 0.55),
+    inset 0 0 0 1px rgba(247, 185, 30, 0.35);
+}
+
+.size-pill:active:not(:disabled) {
+  transform: translateY(0) scale(0.97);
+}
+
+.cat-filter__chip {
+  touch-action: manipulation;
+  box-shadow: 0 8px 18px -14px rgba(0, 0, 0, 0.9);
+}
+
+.cat-filter__chip:hover {
+  transform: translateY(-2px);
+}
+
+.cat-filter__chip.is-active {
+  box-shadow:
+    0 12px 28px -12px rgba(247, 185, 30, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  transform: translateY(-1px);
+}
+
+.search-box {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 16px 34px -24px rgba(0, 0, 0, 0.95);
+}
+
+.search-box:focus-within {
+  box-shadow:
+    0 0 0 3px rgba(247, 185, 30, 0.16),
+    0 20px 40px -26px rgba(0, 0, 0, 0.95);
+}
+
+/* ---------------------------------------------------------
+   4 · Hero — layered 3D scene & parallax
+   --------------------------------------------------------- */
+.hero {
+  /* Written by the parallax effect in Hero.jsx (px / unitless). */
+  --hero-mx: 0;
+  --hero-my: 0;
+  --hero-scroll: 0px;
+  perspective: 1500px;
+}
+
+.hero__bg {
+  /* Taller than the section so the slow scroll-parallax never exposes a gap. */
+  bottom: -170px;
+  transform: translate3d(0, calc(var(--hero-scroll) * 0.14), 0);
+  will-change: transform;
+}
+
+.hero__overlay::after {
+  content: "";
+  position: absolute;
+  inset: -40% -60%;
+  background: linear-gradient(100deg, transparent 42%, rgba(255, 255, 255, 0.05) 50%, transparent 58%);
+  animation: heroSheen 11s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes heroSheen {
+  0% { transform: translateX(-32%); }
+  100% { transform: translateX(32%); }
+}
+
+.hero__content {
+  z-index: 2;
+}
+
+.hero__title {
+  text-shadow: 0 22px 60px rgba(0, 0, 0, 0.7);
+}
+
+.hero__title .text-gold {
+  text-shadow: none;
+}
+
+.hero__meta {
+  background: rgba(16, 16, 20, 0.78);
+  border-color: rgba(255, 255, 255, 0.09);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.07),
+    0 26px 50px -30px rgba(0, 0, 0, 0.95),
+    0 0 0 1px rgba(247, 185, 30, 0.08);
+}
+
+.hero__scroll-hint {
+  z-index: 3;
+}
+
+.hero__scroll-hint span {
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 10px 24px -14px rgba(0, 0, 0, 0.9);
+}
+
+/* ---- decorative scene (desktop only) ---- */
+.hero__scene {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* Soft scrim so hero copy always reads above the imagery */
+.hero__scene::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(11, 11, 13, 0.82) 0%,
+    rgba(11, 11, 13, 0.55) 30%,
+    rgba(11, 11, 13, 0.12) 52%,
+    transparent 68%
+  );
+}
+
+.hero__glow {
+  position: absolute;
+  z-index: 1;
+  border-radius: 50%;
+}
+
+.hero__glow--a {
+  width: 46vw;
+  height: 46vw;
+  max-width: 660px;
+  max-height: 660px;
+  right: -8%;
+  top: 8%;
+  background: radial-gradient(circle, rgba(247, 185, 30, 0.2), transparent 65%);
+  animation: glowDrift 15s ease-in-out infinite alternate;
+}
+
+.hero__glow--b {
+  width: 34vw;
+  height: 34vw;
+  max-width: 480px;
+  max-height: 480px;
+  right: 24%;
+  bottom: -10%;
+  background: radial-gradient(circle, rgba(255, 140, 40, 0.13), transparent 65%);
+  animation: glowDrift 19s ease-in-out infinite alternate-reverse;
+}
+
+@keyframes glowDrift {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to { transform: translate3d(-5%, 6%, 0) scale(1.14); }
+}
+
+/* ---- floating pizza disc ---- */
+.hero__disc-pos {
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  right: clamp(-80px, -3vw, -24px);
+  width: clamp(330px, 35vw, 520px);
+  aspect-ratio: 1 / 1;
+  transform: translateY(-50%);
+}
+
+.hero__disc-par {
+  width: 100%;
+  height: 100%;
+  transform: translate3d(
+    calc(var(--hero-mx) * -26px),
+    calc(var(--hero-my) * -22px + var(--hero-scroll) * 0.07),
+    0
+  );
+  transition: transform 0.4s var(--ease);
+}
+
+.hero__disc-float {
+  width: 100%;
+  height: 100%;
+  animation: gentleFloat 7s ease-in-out infinite;
+}
+
+@keyframes gentleFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-16px); }
+}
+
+.hero__disc-face {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  overflow: hidden;
+  transform: rotateX(calc(var(--hero-my) * 5deg)) rotateY(calc(var(--hero-mx) * -7deg)) rotate(-5deg);
+  transition: transform 0.5s var(--ease);
+  box-shadow:
+    0 60px 110px -45px rgba(0, 0, 0, 0.95),
+    0 26px 55px -32px rgba(0, 0, 0, 0.85),
+    0 0 0 7px rgba(11, 11, 13, 0.92),
+    0 0 0 8px rgba(247, 185, 30, 0.45),
+    0 0 110px rgba(247, 185, 30, 0.18);
+}
+
+.hero__disc-face img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1.08);
+}
+
+/* Slow gloss sweep over the disc */
+.hero__disc-shine {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: linear-gradient(115deg, transparent 38%, rgba(255, 255, 255, 0.22) 50%, transparent 62%);
+  transform: translateX(-45%);
+  animation: discShine 7.5s ease-in-out infinite;
+}
+
+@keyframes discShine {
+  0%, 12% { transform: translateX(-55%); }
+  55%, 100% { transform: translateX(55%); }
+}
+
+/* Orbit rings — siblings so they are not clipped by the disc */
+.hero__disc-ring {
+  position: absolute;
+  inset: -6.5%;
+  z-index: 3;
+  border-radius: 50%;
+  border: 1.5px dashed rgba(247, 185, 30, 0.5);
+  animation: ringSpin 46s linear infinite;
+}
+
+.hero__disc-ring::before {
+  content: "";
+  position: absolute;
+  top: -5px;
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  margin-left: -5px;
+  border-radius: 50%;
+  background: var(--gold-2);
+  box-shadow: 0 0 16px rgba(247, 185, 30, 0.95);
+}
+
+.hero__disc-ring::after {
+  content: "";
+  position: absolute;
+  inset: -7%;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.hero__disc-ring--2 {
+  inset: -13%;
+  border-style: solid;
+  border-color: rgba(255, 255, 255, 0.09);
+  animation-duration: 68s;
+  animation-direction: reverse;
+}
+
+.hero__disc-ring--2::before {
+  background: var(--gold);
+  width: 7px;
+  height: 7px;
+  margin-left: -3.5px;
+  top: -4px;
+  box-shadow: 0 0 12px rgba(247, 185, 30, 0.8);
+}
+
+@keyframes ringSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* ---- floating photo tiles ---- */
+.hero__tile {
+  position: absolute;
+  z-index: 2;
+}
+
+.hero__tile--burger {
+  top: 13%;
+  right: clamp(240px, 30vw, 560px);
+  width: clamp(130px, 13vw, 185px);
+}
+
+.hero__tile--broast {
+  bottom: 11%;
+  right: clamp(300px, 34vw, 620px);
+  width: clamp(118px, 12vw, 165px);
+}
+
+.hero__tile-par {
+  width: 100%;
+  transform: translate3d(
+    calc(var(--hero-mx) * -44px),
+    calc(var(--hero-my) * -34px + var(--hero-scroll) * 0.05),
+    0
+  );
+  transition: transform 0.4s var(--ease);
+}
+
+.hero__tile-float {
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow:
+    0 40px 70px -30px rgba(0, 0, 0, 0.95),
+    0 14px 30px -18px rgba(0, 0, 0, 0.8),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.hero__tile-float img {
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  display: block;
+}
+
+.hero__tile-float span {
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  bottom: 8px;
+  text-align: center;
+  font-size: 0.64rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold-2);
+  background: rgba(11, 11, 13, 0.72);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: 1px solid rgba(247, 185, 30, 0.3);
+  border-radius: 999px;
+  padding: 4px 6px;
+}
+
+.hero__tile-float--a {
+  transform: rotate(-7deg);
+  animation: tileFloatA 6.4s ease-in-out infinite;
+}
+
+.hero__tile-float--b {
+  transform: rotate(6deg);
+  animation: tileFloatB 7.6s ease-in-out infinite;
+}
+
+@keyframes tileFloatA {
+  0%, 100% { transform: rotate(-7deg) translateY(0); }
+  50% { transform: rotate(-7deg) translateY(-14px); }
+}
+
+@keyframes tileFloatB {
+  0%, 100% { transform: rotate(6deg) translateY(0); }
+  50% { transform: rotate(6deg) translateY(-11px); }
+}
+
+/* ---- floating glass chip ---- */
+.hero__chip-pos {
+  position: absolute;
+  z-index: 2;
+  right: clamp(250px, 31vw, 570px);
+  bottom: 27%;
+}
+
+.hero__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--text);
+  background: rgba(16, 16, 20, 0.72);
+  border: 1px solid rgba(247, 185, 30, 0.42);
+  border-radius: 999px;
+  padding: 8px 16px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow:
+    0 24px 46px -26px rgba(0, 0, 0, 0.95),
+    0 0 26px -12px rgba(247, 185, 30, 0.45);
+  transform: rotate(-5deg) translate3d(
+    calc(var(--hero-mx) * -52px),
+    calc(var(--hero-my) * -40px + var(--hero-scroll) * 0.04),
+    0
+  );
+  transition: transform 0.4s var(--ease);
+  animation: chipBob 5.6s ease-in-out infinite;
+}
+
+@keyframes chipBob {
+  0%, 100% { translate: 0 0; }
+  50% { translate: 0 -9px; }
+}
+
+/* ---------------------------------------------------------
+   5 · Menu cards — perspective tilt, layered shadow, glare
+   --------------------------------------------------------- */
+.menu-card {
+  --tilt-rx: 0deg;
+  --tilt-ry: 0deg;
+  --tilt-lift: 0px;
+  --glare-x: 50%;
+  --glare-y: 50%;
+  --reveal-delay: 0ms;
+  position: relative;
+  background:
+    radial-gradient(150% 90% at 50% 0%, rgba(255, 255, 255, 0.05), transparent 55%),
+    linear-gradient(180deg, var(--charcoal-2) 0%, var(--black-2) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.07),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.65),
+    0 1px 2px rgba(0, 0, 0, 0.55),
+    0 14px 24px -12px rgba(0, 0, 0, 0.7),
+    0 36px 54px -30px rgba(0, 0, 0, 0.85);
+  transform: perspective(1000px)
+    rotateX(var(--tilt-rx))
+    rotateY(var(--tilt-ry))
+    translateY(var(--tilt-lift));
+  transition:
+    transform 0.45s var(--ease) 0s,
+    box-shadow 0.45s var(--ease) 0s,
+    border-color 0.3s ease 0s,
+    opacity 0.55s var(--ease) var(--reveal-delay),
+    translate 0.7s var(--ease) var(--reveal-delay);
+}
+
+/* Moving light sweep that follows the pointer */
+.menu-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  border-radius: inherit;
+  background: radial-gradient(
+    circle at var(--glare-x) var(--glare-y),
+    rgba(255, 255, 255, 0.16),
+    rgba(255, 255, 255, 0.05) 30%,
+    transparent 55%
+  );
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+}
+
+.menu-card:hover,
+.menu-card:focus-within {
+  --tilt-lift: -10px;
+  /* Re-declare the 3D transform here: sections.css has an equally specific
+     `.menu-card:hover` rule and premium.css loads later, so this wins and the
+     perspective tilt is not flattened to a plain translateY on hover. */
+  transform: perspective(1000px)
+    rotateX(var(--tilt-rx))
+    rotateY(var(--tilt-ry))
+    translateY(var(--tilt-lift));
+  border-color: rgba(247, 185, 30, 0.42);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 2px 3px rgba(0, 0, 0, 0.55),
+    0 22px 36px -14px rgba(0, 0, 0, 0.8),
+    0 50px 70px -36px rgba(0, 0, 0, 0.9),
+    0 26px 70px -34px rgba(247, 185, 30, 0.4);
+}
+
+.menu-card:hover::before,
+.menu-card:focus-within::before {
+  opacity: 1;
+}
+
+.menu-card__media {
+  z-index: 1;
+}
+
+/* Fade the photo into the card body */
+.menu-card__media::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 42%;
+  z-index: 1;
+  background: linear-gradient(180deg, transparent, rgba(11, 11, 13, 0.6));
+  pointer-events: none;
+}
+
+.menu-card__media img,
+.menu-card__media .food-fallback {
+  filter: saturate(1.04) contrast(1.03);
+  transition: transform 0.7s var(--ease), filter 0.5s ease;
+}
+
+.menu-card:hover .menu-card__media img,
+.menu-card:focus-within .menu-card__media img {
+  transform: scale(1.08);
+  filter: saturate(1.1) brightness(1.05);
+}
+
+.menu-card__badge {
+  z-index: 2;
+  transition: transform 0.4s var(--ease);
+  box-shadow:
+    0 8px 20px -6px rgba(247, 185, 30, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+.menu-card:hover .menu-card__badge {
+  transform: translateY(-2px);
+}
+
+.menu-card__category {
+  z-index: 2;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.menu-card__body {
+  position: relative;
+}
+
+.menu-card__price strong {
+  text-shadow: 0 8px 22px rgba(247, 185, 30, 0.35);
+}
+
+/* Cards that were revealed animate back in when re-filtered */
+.reveal-active [data-reveal-grid] > * {
+  --reveal-delay: calc(min(var(--i, 0), 9) * 60ms);
+  opacity: 0;
+  translate: 0 32px;
+}
+
+.reveal-active [data-reveal-grid].is-inview > * {
+  opacity: 1;
+  translate: 0 0;
+}
+
+.reveal-active [data-reveal-grid].is-inview > .menu-card--unavailable {
+  opacity: 0.6;
+}
+
+/* Touch devices: no tilt, but a clear press response without hover */
+@media (hover: none), (pointer: coarse) {
+  .menu-card:active {
+    border-color: rgba(247, 185, 30, 0.5);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.1),
+      0 10px 22px -10px rgba(0, 0, 0, 0.75),
+      0 18px 40px -22px rgba(247, 185, 30, 0.35);
+  }
+
+  .menu-card:active .menu-card__media img {
+    transform: scale(1.05);
+  }
+
+  .why-card:active {
+    transform: translateY(-3px);
+    border-color: rgba(247, 185, 30, 0.45);
+  }
+}
+
+/* ---------------------------------------------------------
+   6 · Scroll reveal (driven by src/hooks/useReveal.js)
+   --------------------------------------------------------- */
+.reveal-active [data-reveal] {
+  opacity: 0;
+  translate: 0 26px;
+  transition:
+    opacity 0.65s var(--ease) var(--reveal-delay, 0ms),
+    translate 0.8s var(--ease) var(--reveal-delay, 0ms);
+}
+
+.reveal-active [data-reveal].is-inview {
+  opacity: 1;
+  translate: 0 0;
+}
+
+/* why-cards keep their hover transform/colour transitions while revealing */
+.reveal-active .why-card {
+  transition:
+    transform 0.45s var(--ease) 0s,
+    border-color 0.3s ease 0s,
+    box-shadow 0.45s ease 0s,
+    opacity 0.6s var(--ease) var(--reveal-delay),
+    translate 0.75s var(--ease) var(--reveal-delay);
+}
+
+/* ---------------------------------------------------------
+   7 · About · Why · Contact depth polish
+   --------------------------------------------------------- */
+.about-media__main,
+.about-media__secondary,
+.about-media__card {
+  transition: transform 0.55s var(--ease), box-shadow 0.55s var(--ease);
+}
+
+.about-media__main {
+  transform: perspective(1100px) rotateY(3.5deg);
+  box-shadow:
+    0 40px 70px -34px rgba(0, 0, 0, 0.9),
+    0 16px 34px -22px rgba(0, 0, 0, 0.8);
+}
+
+.about-media__secondary {
+  transform: perspective(1100px) rotateY(-4deg) translateY(8px);
+  box-shadow: 0 30px 55px -30px rgba(0, 0, 0, 0.9);
+}
+
+.about-media__card {
+  transform: perspective(1100px) rotateY(-4deg) translateY(8px);
+  box-shadow:
+    0 26px 50px -24px rgba(247, 185, 30, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.45);
+}
+
+.about-media:hover .about-media__main {
+  transform: perspective(1100px) rotateY(0deg) translateY(-6px);
+}
+
+.about-media:hover .about-media__secondary {
+  transform: perspective(1100px) rotateY(0deg) translateY(2px);
+}
+
+.about-media:hover .about-media__card {
+  transform: perspective(1100px) rotateY(0deg) translateY(2px);
+}
+
+.about-stat {
+  background: linear-gradient(180deg, var(--charcoal-2), var(--charcoal));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 16px 30px -22px rgba(0, 0, 0, 0.95);
+}
+
+.about-stat:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.07),
+    0 22px 40px -24px rgba(0, 0, 0, 0.95),
+    0 14px 34px -20px rgba(247, 185, 30, 0.35);
+}
+
+.why-card {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(180deg, var(--charcoal-2) 0%, var(--charcoal) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 20px 40px -28px rgba(0, 0, 0, 0.95);
+}
+
+.why-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(247, 185, 30, 0.55), transparent);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.why-card:hover {
+  transform: translateY(-8px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.07),
+    0 30px 55px -30px rgba(0, 0, 0, 0.95),
+    0 24px 60px -34px rgba(247, 185, 30, 0.4);
+}
+
+.why-card:hover::before {
+  opacity: 1;
+}
+
+.why-card__icon {
+  transition: transform 0.45s var(--ease), box-shadow 0.45s ease;
+  box-shadow: 0 14px 30px -18px rgba(247, 185, 30, 0.6);
+}
+
+.why-card:hover .why-card__icon {
+  transform: translateY(-4px) rotate(-7deg) scale(1.07);
+  box-shadow: 0 20px 40px -16px rgba(247, 185, 30, 0.75);
+}
+
+.contact-card {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(180deg, var(--charcoal-2), var(--charcoal));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 18px 36px -26px rgba(0, 0, 0, 0.95);
+}
+
+.contact-card:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.07),
+    0 26px 48px -28px rgba(0, 0, 0, 0.95),
+    0 16px 44px -28px rgba(247, 185, 30, 0.45);
+}
+
+.contact-card__icon {
+  transition: transform 0.4s var(--ease);
+  box-shadow: 0 10px 24px -16px rgba(0, 0, 0, 0.9);
+}
+
+.contact-card:hover .contact-card__icon {
+  transform: translateY(-2px) scale(1.08);
+}
+
+.contact-map {
+  box-shadow:
+    0 34px 60px -34px rgba(0, 0, 0, 0.95),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+/* ---------------------------------------------------------
+   8 · Cart drawer & checkout — glass panel, row motion
+   --------------------------------------------------------- */
+.cart-overlay {
+  background: rgba(5, 5, 7, 0.74);
+  backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(7px);
+}
+
+.cart-drawer {
+  background: linear-gradient(180deg, var(--charcoal-2) 0%, var(--black-2) 100%);
+  border-left: 1px solid rgba(247, 185, 30, 0.18);
+  box-shadow:
+    -40px 0 90px -30px rgba(0, 0, 0, 0.9),
+    -1px 0 0 rgba(247, 185, 30, 0.12);
+  transition: transform 0.45s var(--ease);
+}
+
+.cart-drawer__head {
+  background: linear-gradient(180deg, rgba(38, 38, 47, 0.9), rgba(23, 23, 28, 0.55));
+  box-shadow: 0 1px 0 rgba(247, 185, 30, 0.14);
+}
+
+.cart-drawer__close:hover {
+  transform: rotate(90deg) scale(1.06);
+  box-shadow: 0 8px 20px -10px rgba(247, 185, 30, 0.6);
+}
+
+.cart-item {
+  transition:
+    transform 0.3s var(--ease),
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
+  animation: cartRowIn 0.45s var(--ease) both;
+}
+
+@keyframes cartRowIn {
+  from { opacity: 0; transform: translateX(26px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.cart-item:hover {
+  transform: translateY(-3px);
+  border-color: rgba(247, 185, 30, 0.35);
+  box-shadow: 0 20px 36px -24px rgba(0, 0, 0, 0.95);
+}
+
+.cart-item__media {
+  box-shadow: 0 10px 22px -14px rgba(0, 0, 0, 0.9);
+}
+
+.qty-control {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.qty-control button {
+  transition: background var(--fast) ease, transform 0.2s var(--ease), box-shadow 0.2s ease;
+  touch-action: manipulation;
+}
+
+.qty-control button:hover {
+  transform: scale(1.14);
+  box-shadow: 0 6px 14px -8px rgba(247, 185, 30, 0.6);
+}
+
+.qty-control button:active {
+  transform: scale(0.94);
+}
+
+.cart-totals__row--total {
+  background: linear-gradient(90deg, rgba(247, 185, 30, 0.08), transparent);
+  border-radius: 12px;
+  padding-inline: 10px;
+}
+
+.cart-drawer__foot {
+  background: linear-gradient(180deg, rgba(11, 11, 13, 0.4), rgba(11, 11, 13, 0.85));
+  box-shadow: 0 -14px 34px -26px rgba(0, 0, 0, 0.95);
+}
+
+.checkout-form input:focus,
+.checkout-form textarea:focus {
+  box-shadow:
+    0 0 0 3px rgba(247, 185, 30, 0.16),
+    0 16px 30px -22px rgba(0, 0, 0, 0.95);
+}
+
+.order-type__option.is-active {
+  box-shadow:
+    0 10px 24px -14px rgba(247, 185, 30, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14);
+}
+
+/* ---------------------------------------------------------
+   9 · Footer & floating WhatsApp button
+   --------------------------------------------------------- */
+.footer {
+  background: linear-gradient(180deg, var(--black-2) 0%, var(--black) 100%);
+  border-top: none;
+  position: relative;
+}
+
+.footer::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(960px, 90%);
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(247, 185, 30, 0.35), transparent);
+}
+
+.footer__col a:hover {
+  color: var(--gold);
+}
+
+.fab-whatsapp {
+  box-shadow:
+    0 18px 40px -14px rgba(37, 211, 102, 0.65),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+
+.fab-whatsapp::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.5);
+  animation: fabPulse 2.8s ease-out infinite;
+  pointer-events: none;
+}
+
+@keyframes fabPulse {
+  0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.5); }
+  70% { box-shadow: 0 0 0 16px rgba(37, 211, 102, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
+}
+
+/* ---------------------------------------------------------
+   10 · Responsive
+   --------------------------------------------------------- */
+@media (max-width: 1200px) {
+  .hero__chip-pos {
+    right: clamp(250px, 33vw, 570px);
+    bottom: 24%;
+  }
+}
+
+@media (max-width: 920px) {
+  /* The background photo carries the hero imagery on small screens —
+     drop the floating 3D props to keep text crisp and save GPU work. */
+  .hero__scene .hero__disc-pos,
+  .hero__scene .hero__tile,
+  .hero__scene .hero__chip-pos {
+    display: none;
+  }
+
+  .hero__scene::before {
+    background: linear-gradient(180deg, rgba(11, 11, 13, 0.55), transparent 45%);
+  }
+
+  .hero__bg {
+    bottom: -110px;
+    transform: translate3d(0, calc(var(--hero-scroll) * 0.08), 0);
+  }
+
+  .about-media__main,
+  .about-media__secondary,
+  .about-media__card {
+    transform: none;
+    box-shadow: 0 30px 60px -34px rgba(0, 0, 0, 0.9);
+  }
+
+  .about-media:hover .about-media__main,
+  .about-media:hover .about-media__secondary,
+  .about-media:hover .about-media__card {
+    transform: translateY(-4px);
+  }
+}
+
+@media (max-width: 768px) {
+  .hero__glow--a {
+    width: 90vw;
+    height: 90vw;
+    right: -30%;
+  }
+
+  .hero__glow--b {
+    width: 70vw;
+    height: 70vw;
+    right: 10%;
+  }
+
+  .section::before {
+    width: 88%;
+  }
+
+  /* Touch-first: give taps a clear response, no hover assumptions */
+  .navbar__cart:active {
+    transform: scale(0.94);
+  }
+
+  .cart-item:hover {
+    transform: none;
+  }
+}
+
+@media (max-width: 520px) {
+  .menu-card:hover,
+  .menu-card:focus-within {
+    --tilt-lift: 0px;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.07),
+      0 1px 2px rgba(0, 0, 0, 0.55),
+      0 14px 24px -12px rgba(0, 0, 0, 0.7),
+      0 36px 54px -30px rgba(0, 0, 0, 0.85);
+  }
+
+  .reveal-active [data-reveal] {
+    translate: 0 18px;
+  }
+
+  .reveal-active [data-reveal-grid] > * {
+    translate: 0 22px;
+    --reveal-delay: calc(min(var(--i, 0), 5) * 50ms);
+  }
+}
+
+/* ---------------------------------------------------------
+   11 · Accessibility — prefers-reduced-motion
+   (variables.css already neutralises durations; this removes
+    the parallax transforms and reveal start-states outright.)
+   --------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .hero__bg,
+  .hero__disc-par,
+  .hero__disc-face,
+  .hero__tile-par,
+  .hero__chip {
+    transform: none !important;
+  }
+
+  .hero__scene::after,
+  .hero__overlay::after {
+    animation: none !important;
+  }
+
+  .reveal-active [data-reveal],
+  .reveal-active [data-reveal-grid] > * {
+    opacity: 1 !important;
+    translate: none !important;
+  }
+
+  .menu-card {
+    transform: none !important;
+  }
+}

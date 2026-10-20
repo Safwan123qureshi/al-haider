@@ -4,17 +4,23 @@ import { useCart } from "../context/CartContext.jsx";
 import { getPricing, formatPKR } from "../utils/pricing.js";
 import { getCategory } from "../data/menu.js";
 import { offerConfig } from "../data/offer.js";
+import useTilt from "../hooks/useTilt.js";
 
 /**
  * One menu card. Handles pizza size selection, live pricing
  * (discount-aware) and Add to Cart.
+ *
+ * `index` only drives the staggered reveal delay (`--i`); product data,
+ * names, descriptions, images and prices come untouched from src/data/menu.js.
  */
-export default function MenuCard({ item }) {
+export default function MenuCard({ item, index = 0 }) {
   const { addItem, offerStatus } = useCart();
   const [sizeId, setSizeId] = useState(() =>
     item.sizes ? (item.sizes.find((s) => s.price != null) || item.sizes[0]).id : null
   );
   const [added, setAdded] = useState(false);
+  // Pointer-only 3D tilt (fine pointers, motion allowed) — see hooks/useTilt.js
+  const cardRef = useTilt();
 
   const category = getCategory(item.category);
   const isPizza = Boolean(item.sizes && item.sizes.length);
@@ -31,7 +37,11 @@ export default function MenuCard({ item }) {
   };
 
   return (
-    <article className={`menu-card ${unavailable ? "menu-card--unavailable" : ""}`}>
+    <article
+      ref={cardRef}
+      className={`menu-card ${unavailable ? "menu-card--unavailable" : ""}`}
+      style={{ "--i": String(index) }}
+    >
       <div className="menu-card__media">
         <FoodImage src={item.image} alt={item.name} category={item.category} />
         {pricing.onOffer && !unavailable && (

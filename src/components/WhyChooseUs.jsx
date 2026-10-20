@@ -55,16 +55,16 @@ export default function WhyChooseUs({ itemCount = 0, categoryCount = 0 }) {
   return (
     <section className="section why-section">
       <div className="container">
-        <div className="section-head">
+        <div className="section-head" data-reveal>
           <p className="section-head__eyebrow">Why Choose Us</p>
           <h2 className="section-head__title">
             Built Around <span className="text-gold">Your Order</span>
           </h2>
         </div>
 
-        <div className="why-grid">
-          {cards.map((card) => (
-            <article key={card.title} className="why-card">
+        <div className="why-grid" data-reveal-grid>
+          {cards.map((card, i) => (
+            <article key={card.title} className="why-card" style={{ "--i": String(i) }}>
               <div className="why-card__icon">{card.icon}</div>
               <h3>{card.title}</h3>
               <p>{card.text}</p>

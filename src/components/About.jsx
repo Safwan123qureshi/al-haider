@@ -6,7 +6,7 @@ export default function About() {
   return (
     <section id="about" className="section about-section">
       <div className="container about-grid">
-        <div className="about-media">
+        <div className="about-media" data-reveal>
           <div className="about-media__main">
             <FoodImage src="/images/about-1.jpg" alt="Guests dining at a warm, modern restaurant" category="pizza" />
           </div>
@@ -19,7 +19,7 @@ export default function About() {
           </div>
         </div>
 
-        <div className="about-copy">
+        <div className="about-copy" data-reveal style={{ "--reveal-delay": "0.12s" }}>
           <p className="section-head__eyebrow">About Us</p>
           <h2 className="section-head__title">
             Mardan's Local <span className="text-gold">Fast-Food</span> Kitchen

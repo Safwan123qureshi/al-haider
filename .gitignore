@@ -10,3 +10,6 @@ dist/
 al-haider-deploy.zip
 .vercel
 .env*
+
+# Local screenshot artifacts from shot-gen.mjs
+shot-*.png

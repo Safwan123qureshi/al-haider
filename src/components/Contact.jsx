@@ -6,7 +6,7 @@ export default function Contact() {
   return (
     <section id="contact" className="section contact-section">
       <div className="container">
-        <div className="section-head">
+        <div className="section-head" data-reveal>
           <p className="section-head__eyebrow">Contact &amp; Location</p>
           <h2 className="section-head__title">
             Ready When <span className="text-gold">You Are</span>
@@ -17,8 +17,8 @@ export default function Contact() {
         </div>
 
         <div className="contact-grid">
-          <div className="contact-cards">
-            <a className="contact-card" href={siteInfo.phoneHref}>
+          <div className="contact-cards" data-reveal-grid>
+            <a className="contact-card" href={siteInfo.phoneHref} style={{ "--i": "0" }}>
               <div className="contact-card__icon" aria-hidden="true">📞</div>
               <div>
                 <span>Call Us</span>
@@ -31,6 +31,7 @@ export default function Contact() {
               href={`${siteInfo.whatsappLink}?text=${encodeURIComponent("Assalam-o-Alaikum! I would like to place an order from Al Haider Pizza House.")}`}
               target="_blank"
               rel="noopener noreferrer"
+              style={{ "--i": "1" }}
             >
               <div className="contact-card__icon" aria-hidden="true">💬</div>
               <div>
@@ -44,6 +45,7 @@ export default function Contact() {
               href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(siteInfo.mapQuery)}`}
               target="_blank"
               rel="noopener noreferrer"
+              style={{ "--i": "2" }}
             >
               <div className="contact-card__icon" aria-hidden="true">📍</div>
               <div>
@@ -52,7 +54,7 @@ export default function Contact() {
               </div>
             </a>
 
-            <a className="contact-card contact-card--order" href="#menu">
+            <a className="contact-card contact-card--order" href="#menu" style={{ "--i": "3" }}>
               <div className="contact-card__icon" aria-hidden="true">🛒</div>
               <div>
                 <span>Build Your Order</span>
@@ -61,7 +63,7 @@ export default function Contact() {
             </a>
           </div>
 
-          <div className="contact-map">
+          <div className="contact-map" data-reveal style={{ "--reveal-delay": "0.15s" }}>
             <iframe
               title="Al Haider Pizza House location map"
               src={mapSrc}

@@ -1,4 +1,5 @@
 import { CartProvider, useCart } from "./context/CartContext.jsx";
+import useReveal from "./hooks/useReveal.js";
 import Navbar from "./components/Navbar.jsx";
 import Hero from "./components/Hero.jsx";
 import OfferBanner from "./components/OfferBanner.jsx";
@@ -13,6 +14,9 @@ import { availableItems, categories } from "./data/menu.js";
 
 function Page() {
   const { isCartOpen } = useCart();
+  // Enables scroll-reveal animations (premium.css). Falls back to showing
+  // everything immediately when IO is unavailable or motion is reduced.
+  useReveal();
 
   return (
     <div className={`page ${isCartOpen ? "page--cart-open" : ""}`}>

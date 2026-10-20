@@ -35,7 +35,7 @@ export default function MenuSection() {
   return (
     <section id="menu" className="section menu-section">
       <div className="container">
-        <div className="section-head">
+        <div className="section-head" data-reveal>
           <p className="section-head__eyebrow">Our Menu</p>
           <h2 className="section-head__title">
             Everything You <span className="text-gold">Crave</span>, One Place
@@ -72,9 +72,9 @@ export default function MenuSection() {
         <CategoryFilter value={category} onChange={setCategory} counts={counts} />
 
         {filtered.length > 0 ? (
-          <div className="menu-grid">
-            {filtered.map((item) => (
-              <MenuCard key={item.id} item={item} />
+          <div className="menu-grid" data-reveal-grid>
+            {filtered.map((item, i) => (
+              <MenuCard key={item.id} item={item} index={i} />
             ))}
           </div>
         ) : (

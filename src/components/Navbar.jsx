@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Logo from "./Logo.jsx";
 import { useCart } from "../context/CartContext.jsx";
 
@@ -13,29 +13,73 @@ export default function Navbar() {
   const { itemCount, openCart } = useCart();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [active, setActive] = useState("home");
+  const headerRef = useRef(null);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
+    const onScroll = () => {
+      setScrolled(window.scrollY > 24);
+      // Scroll-progress line — written straight to CSS, no re-render.
+      const doc = document.documentElement;
+      const max = doc.scrollHeight - doc.clientHeight;
+      headerRef.current?.style.setProperty(
+        "--nav-progress",
+        max > 0 ? String(Math.min(1, window.scrollY / max)) : "0"
+      );
+    };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // Highlight the link of the section currently under the navbar.
+  useEffect(() => {
+    if (typeof window.IntersectionObserver === "undefined") return undefined;
+    const map = { home: "home", popular: "menu", menu: "menu", about: "about", contact: "contact" };
+    const sections = Object.keys(map)
+      .map((id) => document.getElementById(id))
+      .filter(Boolean);
+    if (!sections.length) return undefined;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries.filter((e) => e.isIntersecting);
+        if (!visible.length) return;
+        visible.sort(
+          (a, b) => Math.abs(a.boundingClientRect.top) - Math.abs(b.boundingClientRect.top)
+        );
+        setActive(map[visible[0].target.id] || "home");
+      },
+      { rootMargin: "-38% 0px -54% 0px", threshold: 0 }
+    );
+    sections.forEach((section) => observer.observe(section));
+    return () => observer.disconnect();
+  }, []);
+
   const closeMenu = () => setMenuOpen(false);
 
   return (
-    <header className={`navbar ${scrolled ? "navbar--scrolled" : ""}`}>
+    <header className={`navbar ${scrolled ? "navbar--scrolled" : ""}`} ref={headerRef}>
       <div className="navbar__inner container">
         <a href="#home" className="navbar__brand" onClick={closeMenu} aria-label="Al Haider Pizza House — home">
           <Logo size={42} />
         </a>
 
         <nav className={`navbar__links ${menuOpen ? "navbar__links--open" : ""}`} aria-label="Main navigation">
-          {LINKS.map((link) => (
-            <a key={link.href} href={link.href} onClick={closeMenu}>
-              {link.label}
-            </a>
-          ))}
+          {LINKS.map((link) => {
+            const isActive = active === link.href.slice(1);
+            return (
+              <a
+                key={link.href}
+                href={link.href}
+                onClick={closeMenu}
+                className={isActive ? "is-active" : undefined}
+                aria-current={isActive ? "location" : undefined}
+              >
+                {link.label}
+              </a>
+            );
+          })}
           <a href="#contact" className="navbar__phone-mobile" onClick={closeMenu}>
             📞 0339-5509755
           </a>
@@ -55,7 +99,12 @@ export default function Navbar() {
               <circle cx="19" cy="21" r="1.4" />
               <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
             </svg>
-            {itemCount > 0 && <span className="navbar__badge">{itemCount}</span>}
+            {/* key = count → the badge remounts so its pop animation replays */}
+            {itemCount > 0 && (
+              <span key={itemCount} className="navbar__badge">
+                {itemCount}
+              </span>
+            )}
           </button>
 
           <button
@@ -69,6 +118,8 @@ export default function Navbar() {
           </button>
         </div>
       </div>
+
+      <span className="navbar__progress" aria-hidden="true" />
     </header>
   );
 }
