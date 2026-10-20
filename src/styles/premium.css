@@ -84,8 +84,10 @@ html {
    --------------------------------------------------------- */
 .navbar {
   background: linear-gradient(180deg, rgba(11, 11, 13, 0.78), rgba(11, 11, 13, 0.5));
-  backdrop-filter: blur(16px) saturate(1.3);
-  -webkit-backdrop-filter: blur(16px) saturate(1.3);
+  /* 12px instead of 16px: visually near-identical glass, meaningfully cheaper
+     to re-blur on every scrolled frame on integrated GPUs. */
+  backdrop-filter: blur(12px) saturate(1.15);
+  -webkit-backdrop-filter: blur(12px) saturate(1.15);
 }
 
 .navbar--scrolled {
@@ -350,7 +352,9 @@ html {
   position: absolute;
   inset: -40% -60%;
   background: linear-gradient(100deg, transparent 42%, rgba(255, 255, 255, 0.05) 50%, transparent 58%);
-  animation: heroSheen 11s ease-in-out infinite;
+  /* One single sweep shortly after load — same premium first impression,
+     zero sustained repaint cost (was an infinite loop over an oversized layer). */
+  animation: heroSheen 11s ease-in-out 0.8s 1;
   pointer-events: none;
 }
 
@@ -694,6 +698,15 @@ html {
   50% { translate: 0 -9px; }
 }
 
+/* Once the hero scrolls out of view, Hero.jsx adds `.hero--parked` and every
+   continuous animation inside the hero is paused — the page then runs zero
+   sustained animation work while the visitor reads the menu. */
+.hero--parked *,
+.hero--parked *::before,
+.hero--parked *::after {
+  animation-play-state: paused !important;
+}
+
 /* ---------------------------------------------------------
    5 · Menu cards — perspective tilt, layered shadow, glare
    --------------------------------------------------------- */
@@ -718,8 +731,10 @@ html {
     rotateX(var(--tilt-rx))
     rotateY(var(--tilt-ry))
     translateY(var(--tilt-lift));
+  /* Short transform transition = snappy pointer tracking; the longer
+     shadow/border transitions keep the premium depth feel. */
   transition:
-    transform 0.45s var(--ease) 0s,
+    transform 0.15s ease-out 0s,
     box-shadow 0.45s var(--ease) 0s,
     border-color 0.3s ease 0s,
     opacity 0.55s var(--ease) var(--reveal-delay),
@@ -1143,15 +1158,18 @@ html {
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.5);
+  /* Transform+opacity pulse instead of the old box-shadow pulse:
+     stays on the GPU compositor (no per-frame repaint) while looking
+     like the same expanding WhatsApp "ring" cue. */
+  border: 2px solid rgba(37, 211, 102, 0.55);
   animation: fabPulse 2.8s ease-out infinite;
   pointer-events: none;
 }
 
 @keyframes fabPulse {
-  0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.5); }
-  70% { box-shadow: 0 0 0 16px rgba(37, 211, 102, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
+  0% { transform: scale(1); opacity: 0.85; }
+  70% { transform: scale(1.72); opacity: 0; }
+  100% { transform: scale(1.72); opacity: 0; }
 }
 
 /* ---------------------------------------------------------
@@ -1165,12 +1183,21 @@ html {
 }
 
 @media (max-width: 920px) {
-  /* The background photo carries the hero imagery on small screens —
-     drop the floating 3D props to keep text crisp and save GPU work. */
-  .hero__scene .hero__disc-pos,
+  /* The floating photo tiles and glass chip need horizontal room and are the
+     costliest props — drop them on small screens. The PIZZA DISC stays as a
+     repositioned corner 3D accent so mobile keeps the layered, floating,
+     depth feel instead of a flat hero. */
   .hero__scene .hero__tile,
   .hero__scene .hero__chip-pos {
     display: none;
+  }
+
+  .hero__disc-pos {
+    top: calc(var(--nav-height) + 10px);
+    right: -8%;
+    bottom: auto;
+    width: clamp(190px, 34vw, 300px);
+    transform: none;
   }
 
   .hero__scene::before {
@@ -1224,6 +1251,26 @@ html {
 }
 
 @media (max-width: 520px) {
+  /* Phones: a smaller corner accent + a single orbit ring keeps the 3D feel
+     without crowding the headline or overloading the GPU. */
+  .hero__disc-pos {
+    top: calc(var(--nav-height) - 4px);
+    right: -10%;
+    width: clamp(150px, 40vw, 190px);
+  }
+
+  .hero__disc-ring--2 {
+    display: none;
+  }
+
+  .hero__disc-face {
+    box-shadow:
+      0 30px 60px -30px rgba(0, 0, 0, 0.9),
+      0 0 0 5px rgba(11, 11, 13, 0.9),
+      0 0 0 6px rgba(247, 185, 30, 0.4),
+      0 0 60px rgba(247, 185, 30, 0.14);
+  }
+
   .menu-card:hover,
   .menu-card:focus-within {
     --tilt-lift: 0px;
@@ -1256,6 +1303,21 @@ html {
   .hero__tile-par,
   .hero__chip {
     transform: none !important;
+  }
+
+  /* NO hero animation of any kind under reduced motion — this also covers
+     the floats, rings, glows, pulse dot and scroll hint, not just the sheen. */
+  .hero,
+  .hero *,
+  .hero *::before,
+  .hero *::after {
+    animation: none !important;
+  }
+
+  /* The FAB pulse is also disabled; hide its static ring cleanly. */
+  .fab-whatsapp::after {
+    animation: none !important;
+    opacity: 0;
   }
 
   .hero__scene::after,

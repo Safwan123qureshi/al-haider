@@ -238,6 +238,24 @@ try {
     ? ok("no horizontal overflow (desktop)")
     : bad(`horizontal overflow ${overflowDesktop}px (desktop)`);
 
+  // 7b) After scrolling past the hero, every hero animation must be parked.
+  //     The single allowed continuous animation is the tiny compositor-only
+  //     pulse on the floating WhatsApp button (deliberate call-to-action cue).
+  await delay(1500);
+  const stillRunning = await page.evaluate(() =>
+    document
+      .getAnimations()
+      .filter((a) => a.playState === "running")
+      .map((a) => {
+        const t = a.effect && a.effect.target;
+        return t && t.nodeType === 1 ? String(t.className || t.tagName) : "unknown";
+      })
+  );
+  const nonFab = stillRunning.filter((c) => !c.includes("fab-whatsapp"));
+  nonFab.length === 0
+    ? ok(`animations parked after scroll (only FAB pulse remains: ${stillRunning.length})`)
+    : bad(`${nonFab.length} non-FAB animations still running after full scroll: ${nonFab.join(" | ")}`);
+
   await ctx.close();
 
   /* ---------------- Tablet 768×1024 ---------------- */
@@ -271,17 +289,28 @@ try {
 
   const mHero = await mPage.evaluate(() => {
     const disc = document.querySelector(".hero__disc-pos");
+    const discImg = document.querySelector(".hero__disc-face img");
+    const tile = document.querySelector(".hero__tile");
+    const chip = document.querySelector(".hero__chip-pos");
     const burger = document.querySelector(".navbar__burger");
     const cta = [...document.querySelectorAll(".hero__actions .btn")].find((b) =>
       b.textContent.includes("Order Now")
     );
     return {
-      discHidden: !disc || getComputedStyle(disc).display === "none",
+      discVisible: Boolean(disc) && getComputedStyle(disc).display !== "none",
+      discFloats: Boolean(disc) && getComputedStyle(disc.querySelector(".hero__disc-float")).animationName !== "none",
+      discLoaded: Boolean(discImg && discImg.complete && discImg.naturalWidth > 0),
+      tileHidden: !tile || getComputedStyle(tile).display === "none",
+      chipHidden: !chip || getComputedStyle(chip).display === "none",
       burgerVisible: burger && getComputedStyle(burger).display !== "none",
       orderNow: Boolean(cta),
     };
   });
-  mHero.discHidden ? ok("3D props hidden on mobile (perf)") : bad("3D props visible on mobile");
+  mHero.discVisible ? ok("3D pizza disc visible on mobile") : bad("3D disc hidden on mobile");
+  mHero.discFloats ? ok("disc keeps its floating animation on mobile") : bad("disc float animation missing on mobile");
+  mHero.discLoaded ? ok("disc image loaded on mobile") : bad("disc image not loaded on mobile");
+  !mHero.tileHidden ? bad("photo tiles visible on mobile (perf)") : ok("photo tiles hidden on mobile (perf)");
+  !mHero.chipHidden ? bad("glass chip visible on mobile (perf)") : ok("glass chip hidden on mobile (perf)");
   mHero.burgerVisible ? ok("mobile burger menu visible") : bad("burger menu hidden");
   mHero.orderNow ? ok("Order Now CTA on mobile") : bad("Order Now missing on mobile");
 
@@ -333,6 +362,12 @@ try {
   rCheck.heroAnim === "none" || parseFloat(rCheck.heroDur) <= 1
     ? ok("hero zoom animation effectively disabled (duration ≤1ms)")
     : bad("hero anim = " + rCheck.heroAnim + " " + rCheck.heroDur);
+  const rRunning = await rPage.evaluate(
+    () => document.getAnimations().filter((a) => a.playState === "running").length
+  );
+  rRunning === 0
+    ? ok("no running animations under reduced motion")
+    : bad(`${rRunning} animations running under reduced motion`);
   await rCtx.close();
 
   /* ---------------- Error summary ---------------- */

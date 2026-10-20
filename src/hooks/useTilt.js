@@ -28,8 +28,15 @@ export default function useTilt({ max = 7 } = {}) {
     if (matches("(prefers-reduced-motion: reduce)")) return undefined;
 
     let frame = 0;
+    // Skip style writes when the tilt angle has not materially changed —
+    // avoids constant style invalidation while the pointer hovers nearly still.
+    let lastRx = "";
+    let lastRy = "";
 
     const write = (rx, ry, gx, gy) => {
+      if (rx === lastRx && ry === lastRy) return;
+      lastRx = rx;
+      lastRy = ry;
       el.style.setProperty("--tilt-rx", `${rx}deg`);
       el.style.setProperty("--tilt-ry", `${ry}deg`);
       el.style.setProperty("--glare-x", `${gx}%`);

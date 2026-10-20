@@ -17,19 +17,55 @@ export default function Navbar() {
   const headerRef = useRef(null);
 
   useEffect(() => {
-    const onScroll = () => {
-      setScrolled(window.scrollY > 24);
-      // Scroll-progress line — written straight to CSS, no re-render.
+    const header = headerRef.current;
+    let frame = 0;
+    let maxCache = 0;
+    let maxAt = 0;
+    let scrolledCache = false;
+
+    // Measuring scrollHeight on every scroll event forces layout; cache it
+    // and refresh at most twice per second (covers late image loads too).
+    const measureMax = () => {
       const doc = document.documentElement;
-      const max = doc.scrollHeight - doc.clientHeight;
-      headerRef.current?.style.setProperty(
+      return Math.max(0, doc.scrollHeight - doc.clientHeight);
+    };
+
+    const apply = () => {
+      frame = 0;
+      const y = window.scrollY;
+      const scrolled = y > 24;
+      if (scrolled !== scrolledCache) {
+        scrolledCache = scrolled;
+        setScrolled(scrolled);
+      }
+      const now = Date.now();
+      if (now - maxAt > 500) {
+        maxAt = now;
+        maxCache = measureMax();
+      }
+      // Scroll-progress line — written straight to CSS, no re-render.
+      header?.style.setProperty(
         "--nav-progress",
-        max > 0 ? String(Math.min(1, window.scrollY / max)) : "0"
+        maxCache > 0 ? String(Math.min(1, y / maxCache)) : "0"
       );
     };
+
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(apply);
+    };
+    const onResize = () => {
+      maxAt = 0; // force a fresh measurement
+      onScroll();
+    };
+
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    window.addEventListener("resize", onResize, { passive: true });
+    return () => {
+      if (frame) cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onResize);
+    };
   }, []);
 
   // Highlight the link of the section currently under the navbar.

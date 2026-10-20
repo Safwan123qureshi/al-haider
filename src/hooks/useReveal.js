@@ -56,13 +56,16 @@ export default function useReveal() {
 
     scan();
 
-    let scanFrame = 0;
+    // Debounced re-scan: bursts of DOM mutations (cart badge updates, "✓ Added"
+    // state flips, filter changes) collapse into a single scan ~120ms later
+    // instead of one full-document query per animation frame.
+    let scanTimer = 0;
     const scheduleScan = () => {
-      if (scanFrame) return;
-      scanFrame = requestAnimationFrame(() => {
-        scanFrame = 0;
+      if (scanTimer) return;
+      scanTimer = window.setTimeout(() => {
+        scanTimer = 0;
         scan();
-      });
+      }, 120);
     };
 
     const mutation =
@@ -72,7 +75,7 @@ export default function useReveal() {
     mutation?.observe(document.body, { childList: true, subtree: true });
 
     return () => {
-      if (scanFrame) cancelAnimationFrame(scanFrame);
+      if (scanTimer) clearTimeout(scanTimer);
       observer.disconnect();
       mutation?.disconnect();
       root.classList.remove("reveal-active");

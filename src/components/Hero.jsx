@@ -25,15 +25,17 @@ export default function Hero() {
     const reduced = mq("(prefers-reduced-motion: reduce)");
     if (reduced && reduced.matches) return undefined;
 
+    // Evaluated ONCE at mount — never per pointer frame.
+    const finePointer = mq("(hover: hover) and (pointer: fine)")?.matches === true;
+
+    let parked = false; // true when the hero is nearly off-screen
     let moveFrame = 0;
     let scrollFrame = 0;
 
     const onMove = (event) => {
-      if (moveFrame) cancelAnimationFrame(moveFrame);
+      if (moveFrame) return; // rAF-coalesced: at most one write per frame
       moveFrame = requestAnimationFrame(() => {
         moveFrame = 0;
-        const fine = mq("(hover: hover) and (pointer: fine)");
-        if (!fine || !fine.matches) return;
         const x = (event.clientX / Math.max(1, window.innerWidth)) * 2 - 1;
         const y = (event.clientY / Math.max(1, window.innerHeight)) * 2 - 1;
         el.style.setProperty("--hero-mx", x.toFixed(3));
@@ -41,8 +43,13 @@ export default function Hero() {
       });
     };
 
+    const resetTilt = () => {
+      el.style.setProperty("--hero-mx", "0");
+      el.style.setProperty("--hero-my", "0");
+    };
+
     const onScroll = () => {
-      if (scrollFrame) return;
+      if (scrollFrame || parked) return; // skip work entirely while parked
       scrollFrame = requestAnimationFrame(() => {
         scrollFrame = 0;
         const heroHeight = el.offsetHeight || window.innerHeight;
@@ -52,15 +59,38 @@ export default function Hero() {
       });
     };
 
-    window.addEventListener("pointermove", onMove, { passive: true });
+    // Pause every continuous hero animation (background zoom, floats, rings,
+    // glows, sheen…) once the hero has scrolled out of view, so the page runs
+    // zero sustained animation work while the user reads the menu.
+    let observer = null;
+    if (typeof window.IntersectionObserver !== "undefined") {
+      observer = new IntersectionObserver(
+        ([entry]) => {
+          parked = entry.intersectionRatio < 0.12;
+          el.classList.toggle("hero--parked", parked);
+        },
+        { threshold: [0, 0.12] }
+      );
+      observer.observe(el);
+    }
+
+    if (finePointer) {
+      el.addEventListener("pointermove", onMove, { passive: true });
+      el.addEventListener("pointerleave", resetTilt);
+      el.addEventListener("pointercancel", resetTilt);
+    }
     window.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
 
     return () => {
       if (moveFrame) cancelAnimationFrame(moveFrame);
       if (scrollFrame) cancelAnimationFrame(scrollFrame);
-      window.removeEventListener("pointermove", onMove);
+      observer?.disconnect();
+      el.removeEventListener("pointermove", onMove);
+      el.removeEventListener("pointerleave", resetTilt);
+      el.removeEventListener("pointercancel", resetTilt);
       window.removeEventListener("scroll", onScroll);
+      el.classList.remove("hero--parked");
       el.style.removeProperty("--hero-mx");
       el.style.removeProperty("--hero-my");
       el.style.removeProperty("--hero-scroll");
