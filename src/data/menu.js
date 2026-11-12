@@ -34,7 +34,7 @@
  * ---------------------------------------------------------------
  */
 
-export const categories = [
+export let categories = [
   { id: "pizza", name: "Pizza", icon: "🍕", image: "/images/pizza-1.jpg" },
   { id: "burger", name: "Burgers", icon: "🍔", image: "/images/burger-1.jpg" },
   { id: "wrap", name: "Wraps & Rolls", icon: "🌯", image: "/images/wrap-1.jpg" },
@@ -54,7 +54,7 @@ const pizzaSizes = (small, medium, large) => [
   { id: "large", label: "Large", price: large },
 ];
 
-export const menuItems = [
+export let menuItems = [
   /* ============================= PIZZA ============================= */
   {
     id: "ah-special-pizza",
@@ -547,21 +547,175 @@ export const menuItems = [
   },
 
   /* ============================= COLD DRINKS ============================= */
-  // Only "Mint Margarita" is confirmed on the printed menu photograph.
-  // Add further drinks here ONLY after their names and prices are confirmed.
+  // Cold Drinks confirmed from the printed menu photograph (November 2026).
+  // Sizes are grouped under one product where the same drink is sold in
+  // multiple pack sizes — customers pick a size pill before adding to cart.
+  //
+  // ⚠️ UNCLEAR / NEEDS CONFIRMATION:
+  //  - "Pepsi" priced at Rs. 170 appears on the menu photo with an unclear
+  //    size. Kept as a separate flagged item — do not merge with Pepsi 1 Ltr
+  //    until the size is confirmed by the restaurant.
+  //  - One item on the photo shows Rs. 0 — intentionally NOT added (not
+  //    purchasable, no price to confirm).
+  //
+  // ⚠️ POSSIBLE DUPLICATES:
+  //  - Next Cola Small (Rs. 70) and Next Cola Regular (Rs. 70) have the same
+  //    price — may be the same item listed twice on the photo. Kept separate
+  //    until confirmed.
+  //  - Pepsi 1 Ltr (Rs. 170) and the flagged "Pepsi" (Rs. 170, unclear size)
+  //    may be the same item. Flagged item kept separate pending confirmation.
+
   {
     id: "mint-margarita",
     name: "Mint Margarita",
     category: "drink",
     description: "Chilled blended mint margarita — cool, refreshing and zesty.",
-    image: "/images/drink-1.jpg",
+    image: "/images/drink-1.webp",
     price: 200,
+    available: true,
+  },
+
+  /* --- Pepsi --- */
+  {
+    id: "pepsi",
+    name: "Pepsi",
+    category: "drink",
+    description: "Chilled Pepsi soft drink.",
+    image: "/images/pepsi-bottle.webp",
+    sizes: [
+      { id: "can", label: "Can", price: 120 },
+      { id: "1l", label: "1 Ltr", price: 170 },
+      { id: "1.5l", label: "1.5 Ltr", price: 200 },
+    ],
+    available: true,
+  },
+  {
+    // ⚠️ SIZE UNCLEAR on the printed menu photograph — flagged for confirmation.
+    // Do NOT merge with the Pepsi product above until the size is verified.
+    id: "pepsi-unclear-size",
+    name: "Pepsi",
+    category: "drink",
+    description: "Pepsi soft drink — size to be confirmed.",
+    image: "/images/pepsi-bottle.webp",
+    price: 170,
+    available: true,
+    needsConfirmation: true,
+  },
+
+  /* --- 7Up --- */
+  {
+    id: "7up",
+    name: "7Up",
+    category: "drink",
+    description: "Chilled 7Up lemon-lime soft drink.",
+    image: "/images/7up-bottle.webp",
+    sizes: [
+      { id: "regular", label: "Regular", price: 80 },
+      { id: "can", label: "Can", price: 120 },
+      { id: "1l", label: "1 Liter", price: 170 },
+    ],
+    available: true,
+  },
+
+  /* --- Sprite --- */
+  {
+    id: "sprite",
+    name: "Sprite",
+    category: "drink",
+    description: "Chilled Sprite lemon-lime soft drink.",
+    image: "/images/sprite-bottle.webp",
+    price: 170,
+    available: true,
+  },
+
+  /* --- Sting --- */
+  {
+    id: "sting",
+    name: "Sting",
+    category: "drink",
+    description: "Chilled Sting energy drink.",
+    image: "/images/sting-bottle.webp",
+    price: 150,
+    available: true,
+  },
+
+  /* --- Next Cola --- */
+  {
+    id: "next-cola",
+    name: "Next Cola",
+    category: "drink",
+    description: "Chilled Next Cola soft drink.",
+    image: "/images/next-cola-bottle.webp",
+    sizes: [
+      { id: "small", label: "Small", price: 70 },
+      { id: "regular", label: "Regular", price: 70 },
+      { id: "large", label: "Large", price: 150 },
+    ],
+    available: true,
+  },
+  {
+    // ⚠️ POSSIBLE DUPLICATE: same price as Next Cola Small (Rs. 70). May be
+    // the same item listed twice on the menu photo. Kept separate pending
+    // confirmation from the restaurant.
+    id: "next-cola-regular-dup",
+    name: "Next Cola Regular",
+    category: "drink",
+    description: "Next Cola soft drink — regular size.",
+    image: "/images/next-cola-bottle.webp",
+    price: 70,
+    available: true,
+    needsConfirmation: true,
+  },
+
+  /* --- Water --- */
+  {
+    id: "water",
+    name: "Water",
+    category: "drink",
+    description: "Bottled drinking water.",
+    image: "/images/water-bottle-small.webp",
+    sizes: [
+      { id: "small", label: "Small", price: 30 },
+      { id: "large", label: "Large", price: 100 },
+    ],
+    available: true,
+  },
+
+  /* --- Pizup --- */
+  {
+    id: "pizup",
+    name: "Pizup",
+    category: "drink",
+    description: "Chilled Pizup soft drink.",
+    image: "/images/pizup-bottle.webp",
+    price: 140,
     available: true,
   },
 ];
 
-/** Items visible on the website (available only). */
-export const availableItems = menuItems.filter((item) => item.available !== false);
+/**
+ * Items visible on the website (available only).
+ * Reassigned by setMenuData() when the admin panel pushes live content.
+ */
+export let availableItems = menuItems.filter((item) => item.available !== false);
+
+/**
+ * Replace the menu with content loaded from the database.
+ *
+ * The arrays are MUTATED IN PLACE (and the exported bindings reassigned)
+ * so that every module that imported `menuItems` / `availableItems`
+ * keeps working and immediately sees the new content — ES module
+ * live bindings propagate the reassignment to all importers.
+ */
+export function setMenuData(nextItems, nextCategories) {
+  if (Array.isArray(nextItems)) {
+    menuItems = nextItems;
+    availableItems = nextItems.filter((item) => item.available !== false);
+  }
+  if (Array.isArray(nextCategories)) {
+    categories = nextCategories;
+  }
+}
 
 /** Find a menu item by its id. */
 export function getMenuItem(id) {

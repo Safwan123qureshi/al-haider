@@ -1,7 +1,9 @@
 import { useEffect, useRef } from "react";
+import FoodImage from "./FoodImage.jsx";
 import { useCart } from "../context/CartContext.jsx";
 import { offerConfig } from "../data/offer.js";
 import { siteInfo } from "../data/site.js";
+import { useContentVersion } from "../hooks/useContentVersion.js";
 
 const mq = (query) =>
   typeof window !== "undefined" && typeof window.matchMedia === "function"
@@ -11,6 +13,8 @@ const mq = (query) =>
 export default function Hero() {
   const { offerStatus } = useCart();
   const rootRef = useRef(null);
+  // Re-render when the admin panel publishes a new offer configuration.
+  useContentVersion();
 
   /**
    * Lightweight pointer + scroll parallax.
@@ -100,7 +104,13 @@ export default function Hero() {
   return (
     <section id="home" className="hero" ref={rootRef}>
       <div className="hero__bg" aria-hidden="true">
-        <img src="/images/hero-main.jpg" alt="" fetchpriority="high" />
+        <FoodImage
+          src="/images/hero-main.jpg"
+          alt=""
+          priority
+          width={1200}
+          height={800}
+        />
         <div className="hero__overlay" />
       </div>
 
@@ -115,7 +125,7 @@ export default function Hero() {
               <span className="hero__disc-ring" />
               <span className="hero__disc-ring hero__disc-ring--2" />
               <div className="hero__disc-face">
-                <img src="/images/pizza-4.jpg" alt="" decoding="async" />
+                <FoodImage src="/images/pizza-4.jpg" alt="" loading="lazy" />
                 <span className="hero__disc-shine" />
               </div>
             </div>
@@ -125,7 +135,7 @@ export default function Hero() {
         <div className="hero__tile hero__tile--burger">
           <div className="hero__tile-par">
             <div className="hero__tile-float hero__tile-float--a">
-              <img src="/images/burger-1.jpg" alt="" loading="lazy" decoding="async" />
+              <FoodImage src="/images/burger-1.jpg" alt="" loading="lazy" />
               <span>Burgers</span>
             </div>
           </div>
@@ -134,7 +144,7 @@ export default function Hero() {
         <div className="hero__tile hero__tile--broast">
           <div className="hero__tile-par">
             <div className="hero__tile-float hero__tile-float--b">
-              <img src="/images/broast-1.jpg" alt="" loading="lazy" decoding="async" />
+              <FoodImage src="/images/broast-1.jpg" alt="" loading="lazy" />
               <span>Broast</span>
             </div>
           </div>

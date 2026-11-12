@@ -14,6 +14,16 @@ export default defineConfig({
   },
   build: {
     outDir: "dist",
-    assetsInlineLimit: 2048,
+    assetsInlineLimit: 4096,
+    // Code splitting: separate vendor libs from app code for better caching
+    rollupOptions: {
+      output: {
+        manualChunks: (id) => {
+          if (id.includes("node_modules")) {
+            return "vendor";
+          }
+        },
+      },
+    },
   },
 });

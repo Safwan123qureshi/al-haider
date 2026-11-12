@@ -1298,15 +1298,26 @@ html {
   }
 
   /* ---------------------------------------------------------
-     Phones & tablets: rendering-cost cuts.
-     The menu grid is a single 22,000px+ column of 52 cards on a
-     phone — skipping layout/paint for off-screen cards and dropping
-     per-card blur keeps interaction smooth without changing the look
-     in any meaningful way.
+     All screens: skip layout/paint for off-screen menu cards.
+     This keeps the long menu grid smooth on desktop and mobile alike.
      --------------------------------------------------------- */
   .menu-card {
     content-visibility: auto;
     contain-intrinsic-size: auto 440px;
+  }
+
+  /* ---------------------------------------------------------
+     Phones & tablets: additional rendering-cost cuts.
+     --------------------------------------------------------- */
+  .navbar,
+  .navbar__call {
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  .menu-card__category {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
   }
 
   .navbar,
