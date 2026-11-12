@@ -548,67 +548,40 @@ export let menuItems = [
 
   /* ============================= COLD DRINKS ============================= */
   // Cold Drinks confirmed from the printed menu photograph (November 2026).
-  // Sizes are grouped under one product where the same drink is sold in
-  // multiple pack sizes — customers pick a size pill before adding to cart.
+  // Each drink variant is a separate entry so all 16 products display
+  // independently in the Cold Drinks category.
   //
   // ⚠️ NOT ADDED (pending confirmation):
-  //  - "Pepsi" at Rs. 170 with unclear size on the menu photo — not added
-  //    until the size is confirmed by the restaurant.
   //  - One item on the photo shows Rs. 0 — intentionally NOT added (not
   //    purchasable, no price to confirm).
 
   {
-    id: "mint-margarita",
-    name: "Mint Margarita",
+    id: "pepsi-1l",
+    name: "Pepsi 1 Ltr",
     category: "drink",
-    description: "Chilled blended mint margarita — cool, refreshing and zesty.",
-    image: "/images/drink-1.webp",
-    price: 200,
-    available: true,
-  },
-
-  /* --- Pepsi --- */
-  {
-    id: "pepsi",
-    name: "Pepsi",
-    category: "drink",
-    description: "Chilled Pepsi soft drink.",
-    image: "/images/pepsi-bottle.webp",
-    sizes: [
-      { id: "can", label: "Can", price: 120 },
-      { id: "1l", label: "1 Ltr", price: 170 },
-      { id: "1.5l", label: "1.5 Ltr", price: 200 },
-    ],
-    available: true,
-  },
-
-  /* --- 7Up --- */
-  {
-    id: "7up",
-    name: "7Up",
-    category: "drink",
-    description: "Chilled 7Up lemon-lime soft drink.",
-    image: "/images/7up-bottle.webp",
-    sizes: [
-      { id: "regular", label: "Regular", price: 80 },
-      { id: "can", label: "Can", price: 120 },
-      { id: "1l", label: "1 Liter", price: 170 },
-    ],
-    available: true,
-  },
-
-  /* --- Sprite --- */
-  {
-    id: "sprite",
-    name: "Sprite",
-    category: "drink",
-    description: "Chilled Sprite lemon-lime soft drink.",
-    image: "/images/sprite-bottle.webp",
+    description: "Chilled Pepsi soft drink — 1 liter bottle.",
+    image: "/images/pepsi-1l.webp",
     price: 170,
     available: true,
   },
-
-  /* --- Sting --- */
+  {
+    id: "7up-regular",
+    name: "7Up Regular",
+    category: "drink",
+    description: "Chilled 7Up lemon-lime soft drink — regular size.",
+    image: "/images/7up-regular.webp",
+    price: 80,
+    available: true,
+  },
+  {
+    id: "pepsi-1.5l",
+    name: "Pepsi 1.5 Ltr",
+    category: "drink",
+    description: "Chilled Pepsi soft drink — 1.5 liter bottle.",
+    image: "/images/pepsi-1.5l.webp",
+    price: 200,
+    available: true,
+  },
   {
     id: "sting",
     name: "Sting",
@@ -618,37 +591,96 @@ export let menuItems = [
     price: 150,
     available: true,
   },
-
-  /* --- Next Cola --- */
   {
-    id: "next-cola",
-    name: "Next Cola",
+    id: "next-cola-large",
+    name: "Next Cola Large",
     category: "drink",
-    description: "Chilled Next Cola soft drink.",
-    image: "/images/next-cola-bottle.webp",
-    sizes: [
-      { id: "small", label: "Small", price: 70 },
-      { id: "regular", label: "Regular", price: 70 },
-      { id: "large", label: "Large", price: 150 },
-    ],
+    description: "Chilled Next Cola soft drink — large size.",
+    image: "/images/next-cola-large.webp",
+    price: 150,
     available: true,
   },
-
-  /* --- Water --- */
   {
-    id: "water",
-    name: "Water",
+    id: "next-cola-small",
+    name: "Next Cola Small",
     category: "drink",
-    description: "Bottled drinking water.",
-    image: "/images/water-bottle-small.webp",
-    sizes: [
-      { id: "small", label: "Small", price: 30 },
-      { id: "large", label: "Large", price: 100 },
-    ],
+    description: "Chilled Next Cola soft drink — small size.",
+    image: "/images/next-cola-small.webp",
+    price: 70,
     available: true,
   },
-
-  /* --- Pizup --- */
+  {
+    id: "water-small",
+    name: "Water Small",
+    category: "drink",
+    description: "Bottled drinking water — small size.",
+    image: "/images/water-small.webp",
+    price: 30,
+    available: true,
+  },
+  {
+    id: "7up-can",
+    name: "Can 7Up",
+    category: "drink",
+    description: "Chilled 7Up lemon-lime soft drink — can.",
+    image: "/images/7up-can.webp",
+    price: 120,
+    available: true,
+  },
+  {
+    id: "water-large",
+    name: "Water Large",
+    category: "drink",
+    description: "Bottled drinking water — large size.",
+    image: "/images/water-large.webp",
+    price: 100,
+    available: true,
+  },
+  {
+    id: "pepsi-can",
+    name: "Can Pepsi",
+    category: "drink",
+    description: "Chilled Pepsi soft drink — can.",
+    image: "/images/pepsi-can.webp",
+    price: 120,
+    available: true,
+  },
+  {
+    id: "mint-margarita",
+    name: "Mint Margarita",
+    category: "drink",
+    description: "Chilled blended mint margarita — cool, refreshing and zesty.",
+    image: "/images/mint-drink.webp",
+    price: 200,
+    available: true,
+  },
+  {
+    id: "pepsi-unclear",
+    name: "Pepsi",
+    category: "drink",
+    description: "Pepsi soft drink — bottle size to be confirmed.",
+    image: "/images/pepsi-unclear.webp",
+    price: 170,
+    available: true,
+  },
+  {
+    id: "7up-1l",
+    name: "7Up 1 Liter",
+    category: "drink",
+    description: "Chilled 7Up lemon-lime soft drink — 1 liter bottle.",
+    image: "/images/7up-1l.webp",
+    price: 170,
+    available: true,
+  },
+  {
+    id: "next-cola-regular",
+    name: "Next Cola Regular",
+    category: "drink",
+    description: "Chilled Next Cola soft drink — regular size.",
+    image: "/images/next-cola-regular.webp",
+    price: 70,
+    available: true,
+  },
   {
     id: "pizup",
     name: "Pizup",
@@ -656,6 +688,15 @@ export let menuItems = [
     description: "Chilled Pizup soft drink.",
     image: "/images/pizup-bottle.webp",
     price: 140,
+    available: true,
+  },
+  {
+    id: "sprite",
+    name: "Sprite",
+    category: "drink",
+    description: "Chilled Sprite lemon-lime soft drink.",
+    image: "/images/sprite-bottle.webp",
+    price: 170,
     available: true,
   },
 ];

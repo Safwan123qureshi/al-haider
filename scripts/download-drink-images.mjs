@@ -4,7 +4,7 @@ import sharp from "sharp";
 
 const dir = "public/images";
 
-// Brand colors for Placehold.co placeholders
+// Brand colors for Placehold.co placeholders (matching actual brand colors)
 const brandColors = {
   pepsi: { text: "003366", bg: "ffffff" },
   "7up": { text: "0099cc", bg: "ffffff" },
@@ -12,28 +12,45 @@ const brandColors = {
   sting: { text: "ffd700", bg: "000000" },
   "next-cola": { text: "cc0000", bg: "ffffff" },
   water: { text: "0066cc", bg: "e8f4fd" },
+  pizup: { text: "003366", bg: "ffffff" },
 };
 
-// Working Unsplash image (generic cocktail/drink photo)
-const genericDrinkUrl = "https://images.unsplash.com/photo-1542838132-92c53300491e?w=800&q=80&fm=webp";
+// Working Unsplash image (real cocktail/mint drink photo)
+const mintDrinkUrl = "https://images.unsplash.com/photo-1542838132-92c53300491e?w=800&q=80&fm=webp";
 
+// All drink images needed for the 16 Cold Drinks products
 const sources = [
-  // Brand-specific placeholders via Placehold.co (clean, labelled, fast-loading)
-  // These will be replaced with actual brand photos when available
-  { name: "pepsi-bottle", type: "placeholder", label: "Pepsi", brand: "pepsi", width: 600, height: 400 },
+  // Real Unsplash photo for Mint Margarita
+  { name: "mint-drink", type: "unsplash", url: mintDrinkUrl },
+
+  // Pepsi products
   { name: "pepsi-1l", type: "placeholder", label: "Pepsi 1L", brand: "pepsi", width: 600, height: 400 },
   { name: "pepsi-1.5l", type: "placeholder", label: "Pepsi 1.5L", brand: "pepsi", width: 600, height: 500 },
   { name: "pepsi-can", type: "placeholder", label: "Pepsi Can", brand: "pepsi", width: 400, height: 400 },
-  { name: "7up-bottle", type: "placeholder", label: "7Up", brand: "7up", width: 600, height: 400 },
+  { name: "pepsi-unclear", type: "placeholder", label: "Pepsi", brand: "pepsi", width: 600, height: 400 },
+
+  // 7Up products
+  { name: "7up-regular", type: "placeholder", label: "7Up Regular", brand: "7up", width: 600, height: 400 },
   { name: "7up-can", type: "placeholder", label: "7Up Can", brand: "7up", width: 400, height: 400 },
   { name: "7up-1l", type: "placeholder", label: "7Up 1L", brand: "7up", width: 600, height: 400 },
+
+  // Sprite
   { name: "sprite-bottle", type: "placeholder", label: "Sprite", brand: "sprite", width: 600, height: 400 },
+
+  // Sting
   { name: "sting-bottle", type: "placeholder", label: "Sting", brand: "sting", width: 600, height: 400 },
-  { name: "next-cola-bottle", type: "placeholder", label: "Next Cola", brand: "next-cola", width: 600, height: 400 },
-  { name: "water-bottle-small", type: "placeholder", label: "Water", brand: "water", width: 400, height: 600 },
-  { name: "water-bottle-large", type: "placeholder", label: "Water", brand: "water", width: 400, height: 700 },
-  { name: "mint-drink", type: "unsplash", url: genericDrinkUrl },
-  { name: "pizup-bottle", type: "placeholder", label: "Pizup", brand: "water", width: 600, height: 400 },
+
+  // Next Cola products
+  { name: "next-cola-small", type: "placeholder", label: "Next Cola Small", brand: "next-cola", width: 600, height: 400 },
+  { name: "next-cola-regular", type: "placeholder", label: "Next Cola Regular", brand: "next-cola", width: 600, height: 400 },
+  { name: "next-cola-large", type: "placeholder", label: "Next Cola Large", brand: "next-cola", width: 600, height: 500 },
+
+  // Water products
+  { name: "water-small", type: "placeholder", label: "Water Small", brand: "water", width: 400, height: 600 },
+  { name: "water-large", type: "placeholder", label: "Water Large", brand: "water", width: 400, height: 700 },
+
+  // Pizup
+  { name: "pizup-bottle", type: "placeholder", label: "Pizup", brand: "pizup", width: 600, height: 400 },
 ];
 
 async function download() {
