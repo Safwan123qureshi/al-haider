@@ -551,19 +551,11 @@ export let menuItems = [
   // Sizes are grouped under one product where the same drink is sold in
   // multiple pack sizes — customers pick a size pill before adding to cart.
   //
-  // ⚠️ UNCLEAR / NEEDS CONFIRMATION:
-  //  - "Pepsi" priced at Rs. 170 appears on the menu photo with an unclear
-  //    size. Kept as a separate flagged item — do not merge with Pepsi 1 Ltr
+  // ⚠️ NOT ADDED (pending confirmation):
+  //  - "Pepsi" at Rs. 170 with unclear size on the menu photo — not added
   //    until the size is confirmed by the restaurant.
   //  - One item on the photo shows Rs. 0 — intentionally NOT added (not
   //    purchasable, no price to confirm).
-  //
-  // ⚠️ POSSIBLE DUPLICATES:
-  //  - Next Cola Small (Rs. 70) and Next Cola Regular (Rs. 70) have the same
-  //    price — may be the same item listed twice on the photo. Kept separate
-  //    until confirmed.
-  //  - Pepsi 1 Ltr (Rs. 170) and the flagged "Pepsi" (Rs. 170, unclear size)
-  //    may be the same item. Flagged item kept separate pending confirmation.
 
   {
     id: "mint-margarita",
@@ -588,18 +580,6 @@ export let menuItems = [
       { id: "1.5l", label: "1.5 Ltr", price: 200 },
     ],
     available: true,
-  },
-  {
-    // ⚠️ SIZE UNCLEAR on the printed menu photograph — flagged for confirmation.
-    // Do NOT merge with the Pepsi product above until the size is verified.
-    id: "pepsi-unclear-size",
-    name: "Pepsi",
-    category: "drink",
-    description: "Pepsi soft drink — size to be confirmed.",
-    image: "/images/pepsi-bottle.webp",
-    price: 170,
-    available: true,
-    needsConfirmation: true,
   },
 
   /* --- 7Up --- */
@@ -652,19 +632,6 @@ export let menuItems = [
       { id: "large", label: "Large", price: 150 },
     ],
     available: true,
-  },
-  {
-    // ⚠️ POSSIBLE DUPLICATE: same price as Next Cola Small (Rs. 70). May be
-    // the same item listed twice on the menu photo. Kept separate pending
-    // confirmation from the restaurant.
-    id: "next-cola-regular-dup",
-    name: "Next Cola Regular",
-    category: "drink",
-    description: "Next Cola soft drink — regular size.",
-    image: "/images/next-cola-bottle.webp",
-    price: 70,
-    available: true,
-    needsConfirmation: true,
   },
 
   /* --- Water --- */
