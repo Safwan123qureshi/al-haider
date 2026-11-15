@@ -3,7 +3,6 @@ import FoodImage from "./FoodImage.jsx";
 import { useCart } from "../context/CartContext.jsx";
 import { offerConfig } from "../data/offer.js";
 import { siteInfo } from "../data/site.js";
-import { useContentVersion } from "../hooks/useContentVersion.js";
 
 const mq = (query) =>
   typeof window !== "undefined" && typeof window.matchMedia === "function"
@@ -13,8 +12,6 @@ const mq = (query) =>
 export default function Hero() {
   const { offerStatus } = useCart();
   const rootRef = useRef(null);
-  // Re-render when the admin panel publishes a new offer configuration.
-  useContentVersion();
 
   /**
    * Lightweight pointer + scroll parallax.
