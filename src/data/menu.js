@@ -223,7 +223,7 @@ export let menuItems = [
     category: "burger",
     description: "Two juicy patties stacked with cheese, lettuce and sauce.",
     image: "/images/burger-3.jpg",
-    price: 350,
+    price: 550,
     available: true,
   },
   {
